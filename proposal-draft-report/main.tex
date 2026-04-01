@@ -9,15 +9,26 @@
 
 % --- Frontmatter ---
 \pagenumbering{roman}
-\input{frontmatter/cover}
+\input{frontmatter/cover_page}
+\input{frontmatter/abstract}
+\input{frontmatter/toc}
+\input{frontmatter/list_of_abbreviations}
 
 % --- Main content ---
 \newpage
 \pagenumbering{arabic}
 \setcounter{page}{1}
 
+% Introduction
+\input{sections/introduction/index}
+\input{sections/introduction/background}
+\input{sections/introduction/motivation}
+\input{sections/introduction/problem_definition}
+\input{sections/introduction/objectives}
+\input{sections/introduction/scope}
+
 % --- Backmatter ---
-\input{sections/backmatter/appendices}
+% \input{sections/backmatter/appendices}
 
 \newpage
 \phantomsection
