@@ -77,28 +77,26 @@
 
 % Document Starting
 % ---------------------------------------------------------------
-
 \begin{document}
 
 % --- Frontmatter ---
 \pagenumbering{roman}
 \input{frontmatter/cover}
 
-% ---- Chores ------
 \newpage
 \input{frontmatter/toc}
 
-% --- Main content ---
+% --- Main content Sections---
 \newpage
 \pagenumbering{arabic}
 \setcounter{page}{1}
 
 \input{sections/introduction}
+\input{sections/theory}
 \input{sections/procedure}
 \input{sections/implementation1}
 \input{sections/implementation2}
 \input{sections/implementation3}
-\input{sections/ai_usage}
 \input{sections/conclusion}
   
 \end{document}
