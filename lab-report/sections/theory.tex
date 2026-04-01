@@ -3,6 +3,7 @@
 \addcontentsline{toc}{section}{THEORY}
 
 \subsection*{Signal Modulation}
+\phantomsection
 \addcontentsline{toc}{subsection}{Signal Modulation}
 
 Signal Modulation refers to the process of encoding the information/data (baseband signal)
@@ -22,7 +23,7 @@ The modulation of baseband signal into high frequency carrier signal provides se
 \addcontentsline{toc}{subsection}{Types of Modulation}
 
 Major types of modulations are:
-\begin{enumerate}[label=\textbf{\arabic*.}, itemsep=6pt, parsep=12pt, left=0pt]
+\begin{enumerate}[label=\textbf{\arabic*.}, itemsep=6pt, parsep=12pt, leftmargin=*]
     \item \textbf{Analog Modulation}
 
     Analog modulation is a method in which a continuous carrier signal is changed according to a continuous message signal. The message signal varies smoothly with time, such as speech or music. In analog modulation, one property of the carrier wave amplitude, frequency, or phase is varied continuously to represent the information. Common examples include AM and FM radio broadcasting.
@@ -31,7 +32,7 @@ Major types of modulations are:
             label=\textbf{\alph*.},
             itemsep=6pt,
             parsep=6pt,
-            left=0
+            leftmargin=*
         ]
         \item \textbf{Amplitude Modulation}  
         It is the process of varying the amplitude of the carrier wave according to the message signal (baseband signal) to modulate the signal.
@@ -51,7 +52,7 @@ Major types of modulations are:
             label=\textbf{\alph*.},
             itemsep=6pt,
             parsep=6pt,
-            left=0
+            leftmargin=*
         ]
         \item \textbf{ASK (Amplitude Shift Keying)}  
         It is the process of changing the amplitude of the carrier wave according to the digital data `0' or `1' where the carrier is present when data is `1' and absent when data is `0'.
@@ -150,7 +151,7 @@ The commonly used methods for generating SSB-SC signals are:
 
 \textbf{Filter Method (Frequency Discrimination Method)}: In this method, a DSB-SC signal is first generated. A highly selective bandpass filter is then used to remove one of the sidebands while allowing the other sideband to pass. The output of the filter is an SSB-SC signal. This method requires sharp filters, especially when the message frequency is low.
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth]{images/ssb_fdm.png}
     \caption{SSB-SC generation using Frequency (Filter) Discrimination Method}
@@ -159,7 +160,7 @@ The commonly used methods for generating SSB-SC signals are:
 
 \textbf{Phase Discrimination Method}: In this method, phase shifters are used to introduce a $90^\circ$ phase shift to the message signal and the carrier signal. The resulting signals are combined in such a way that one sideband cancels out due to phase opposition, leaving only the desired sideband. This method avoids the need for sharp filters and is widely used in practical SSB systems.
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth]{images/ssb_pdm.png}
     \caption{SSB-SC generation using Phase Discrimination Method}

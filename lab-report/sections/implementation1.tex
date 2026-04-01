@@ -3,6 +3,7 @@
 \addcontentsline{toc}{section}{IMPLEMENTATION}
 
 \subsection*{Double Side Band -- Full Carrier (DSB-FC)}
+\phantomsection
 \addcontentsline{toc}{subsection}{DSB-FC}
 The DSB-FC signal is implemented by varying the amplitude of a high-frequency carrier in
 proportion to the message signal. In the implementation, a low-frequency sinusoidal message
@@ -10,13 +11,13 @@ signal is generated and added to a constant carrier term to ensure that the carr
 transmitted in full. The resulting signal contains the carrier component along with both
 upper and lower sidebands.
 
-\begin{enumerate}[itemsep=6pt, parsep=4pt, left=0, label={\textbf{\arabic*.}}]
+\begin{enumerate}[itemsep=6pt, parsep=4pt, leftmargin=*, label={\textbf{\arabic*.}}]
 
 \item \textbf{Sampling frequency (Fs)} \\
 Determines how finely the signal is sampled. Must satisfy Nyquist: $Fs > 2 \, f_m$.  
 Effect: higher Fs gives smoother signal and more accurate frequency spectrum.
 
-\item \textbf{Duration (T)}} \\
+\item \textbf{Duration (T)} \\
 Total time of the signal.  
 Effect: longer T improves frequency resolution in FFT.
 
@@ -123,13 +124,13 @@ message amplitude $A_m = 1$, carrier amplitude $A_c = 5$,
 message frequency $f_m = 50$ Hz, carrier frequency $f_c = 1000$ Hz, 
 and modulation index $k_a = 1$.
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.9\textwidth]{images/output1.png} 
     \caption{Plots of (a) Message Signal, (b) Carrier Signal, and (c) DSB-FC Modulated Signal}
     \label{fig:output1}
 \end{figure}
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.9\textwidth]{images/output2.png} 
     \caption{Plots of DSB-FC spectrum}
@@ -156,28 +157,28 @@ From the frequency-domain plot (Figure~\ref{fig:output2}):
 
 \subsubsection*{Variations of Different Parameters:}
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.9\textwidth]{images/ka_variation.png}
     \caption{Effect of modulation index $k_a$ on DSB-FC signal}
     \label{fig:ka_variation}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.9\textwidth]{images/Am_variation.png}
     \caption{Effect of message amplitude $A_m$ on DSB-FC signal}
     \label{fig:Am_variation}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.9\textwidth]{images/fm_time_variation.png}
     \caption{Effect of message frequency $f_m$ on DSB-FC signal in time domain}
     \label{fig:fm_time}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.9\textwidth]{images/fm_freq_variation.png}
     \caption{Effect of message frequency $f_m$ on DSB-FC spectrum} 

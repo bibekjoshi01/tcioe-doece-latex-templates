@@ -8,12 +8,14 @@
 \begin{document}
 
 % --- Frontmatter ---
+\hypersetup{pageanchor=false}
 \pagenumbering{roman}
 \input{frontmatter/cover}
+\setcounter{page}{2}
 
-\newpage
 \input{frontmatter/toc}
 
+\hypersetup{pageanchor=true}
 % --- Main content Sections---
 \newpage
 \pagenumbering{arabic}
