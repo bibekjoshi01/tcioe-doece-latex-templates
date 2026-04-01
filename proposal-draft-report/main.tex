@@ -1,0 +1,40 @@
+\documentclass[12pt,a4paper]{article}
+
+% Styles
+\input{styles}
+
+% Document Starting
+% ---------------------------------------------------------------
+\begin{document}
+
+% --- Frontmatter ---
+\pagenumbering{roman}
+\input{frontmatter/cover_page}
+\input{frontmatter/abstract}
+\input{frontmatter/toc}
+\input{frontmatter/list_of_abbreviations}
+
+% --- Main content ---
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% Introduction
+\input{sections/introduction/index}
+\input{sections/introduction/background}
+\input{sections/introduction/motivation}
+\input{sections/introduction/problem_definition}
+\input{sections/introduction/objectives}
+\input{sections/introduction/scope}
+
+% --- Backmatter ---
+% \input{sections/backmatter/appendices}
+
+\newpage
+\phantomsection
+\addcontentsline{toc}{section}{References}  
+\bibliographystyle{ieeetr}
+\nocite{*}  
+\bibliography{references}
+
+\end{document}
