@@ -1,0 +1,79 @@
+# =========================
+# Core LaTeX auxiliary files
+# =========================
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.fmt
+*.fot
+*.cb
+*.cb2
+*.lb
+
+# =========================
+# Bibliography files
+# =========================
+*.bbl
+*.bcf
+*.blg
+*.run.xml
+
+# =========================
+# Index files
+# =========================
+*.idx
+*.ilg
+*.ind
+
+# =========================
+# Glossary files
+# =========================
+*.glo
+*.gls
+*.glg
+
+# =========================
+# Latexmk
+# =========================
+*.fdb_latexmk
+*.synctex.gz
+
+# =========================
+# Build directories
+# =========================
+_build/
+build/
+out/
+dist/
+
+# =========================
+# Temporary files
+# =========================
+*.tmp
+*.temp
+*.swp
+*.bak
+*~
+
+# =========================
+# Editor-specific
+# =========================
+.vscode/
+.idea/
+*.code-workspace
+
+# =========================
+# OS-specific
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Output files (optional)
+# =========================
+# Uncomment if you DON'T want PDFs in repo
+# *.pdf

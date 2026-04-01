@@ -1,0 +1,12 @@
+\newpage
+\section*{DISCUSSION}
+\addcontentsline{toc}{section}{DISCUSSION}
+In this lab, we explored different types of amplitude modulation: DSB-FC, DSB-SC, and SSB-SC. Initially about the Modulation we learned in lab class by instructor and implemented DSB-FC then other methods were implemented as part of lab assignment. 
+
+For DSB-FC, we saw that the carrier amplitude changes according to the message signal. The carrier itself doesn't carry information but makes it easy to recover the message using simple envelope detection. We noticed that increasing the modulation index or message amplitude makes the envelope taller, and the bandwidth depends on the message frequency.
+For DSB-SC, the carrier is suppressed, so only the sidebands carry information. The time-domain signal looked similar to DSB-FC, but the carrier wasn't really present in the frequency spectrum. Using a longer signal duration improved the FFT resolution, making the upper and lower sidebands clearer. For SSB-SC, we learned how to remove one of the sidebands to save bandwidth. We tried both the Butterworth band-pass filter method and the phase discrimination method. The filter method showed that the filter order affects how clean the sideband is the higher the order, the steeper the filter, which gives a cleaner separation. The phase method produced a cleaner SSB signal without worrying about filter order.
+
+
+\section*{CONCLUSION}
+\addcontentsline{toc}{section}{CONCLUSION}
+The objectives of the lab were successfully achieved. From this lab, we learned Analog Amplitude modulation is all about encoding information in the amplitude of a carrier signal. Time-domain and frequency-domain plots help visualize how modulation works and how parameters affect the signals. This lab gave us a hands-on understanding of AM concepts and how engineers control power, bandwidth, and signal quality in real communication systems.
