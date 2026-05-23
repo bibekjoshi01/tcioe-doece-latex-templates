@@ -6,11 +6,12 @@ The project focuses on audio-based synthetic speech detection in VoIP communicat
 
 The project is capable of the following:
 \begin{itemize}
-    \item Detect AI-generated or synthetic speech in streaming audio
-    \item Operate under degraded communication conditions
-    \item Perform low-latency real-time inference
-    \item Analyze robustness under various codecs and transmission distortions
-    \item Provide measurable detection confidence and performance metrics
+    \item Detect whether incoming speech audio is real or AI-generated (synthetic speech) in near real-time
+    \item Processes streaming audio chunks instead of requiring full audio files
+    \item Includes a simulation environment for testing VoIP-like audio transmission
+    \item Supports low-latency inference pipeline suitable for real-time communication scenarios
+    \item Evaluates and compares multiple models/approaches for robustness (e.g., ML vs DL models)
+    \item Provide measurable detection confidence and performance metrics under different scenarios
 \end{itemize}
 
 
@@ -18,10 +19,12 @@ The project is capable of the following:
 
 The scope of this project is subject to the following limitations:
 \begin{itemize}
-    \item Accuracy of measurements depends on sensor quality and calibration; readings may be affected by temperature, humidity, or sensor drift
-    \item Automated control is limited to compatible devices (e.g., fans, purifiers) and cannot address structural ventilation issues in buildings
-    \item Designed primarily for indoor environments; may not scale effectively for large halls or industrial spaces without significant modifications
-    \item Real-time monitoring and IoT features require stable internet connectivity; performance may degrade in areas with poor network access
+    \item Performance may degrade when exposed to unseen or highly advanced neural codec-based synthetic speech models
+    \item Limited generalization to languages or accents not well represented in training data (e.g., Nepali-specific datasets may be limited)
+    \item Accuracy may reduce under extreme noise conditions or highly compressed audio streams
+    \item System is not designed for large-scale production deployment
+    \item Real-time performance depends on hardware capability and model complexity trade-offs
+    \item Dataset availability constraints may limit coverage of diverse real-world VoIP scenarios and attack types
 \end{itemize}
 
 
@@ -29,10 +32,11 @@ The scope of this project is subject to the following limitations:
 
 The potential applications of the proposed system includes:
 \begin{itemize}
-    \item Voice phishing and impersonation detection
-    \item Secure voice-based authentication systems
-    \item Fraud prevention in telecommunication systems
-    \item Online meeting and conferencing security
-    \item Media authenticity verification
-    \item Audio forensic analysis
+    \item \textbf{Fraud and Social Engineering Prevention:} Detects voice spoofing in phishing calls, impersonation scams, and financial fraud attempts
+    \item \textbf{Secure VoIP Communication:} Enhances security in internet-based calling systems (e.g., Zoom-like platforms, SIP-based VoIP systems) by flagging synthetic speech in real-time
+    \item \textbf{Voice Authentication Systems:} Acts as a countermeasure layer for speaker verification systems used in banking, telecom, and identity verification services
+    \item \textbf{Call Center Security:} Helps verify authenticity of customer or agent voices in customer support and outsourcing environments
+    \item \textbf{Cybersecurity and Digital Forensics:} Assists in analyzing suspicious audio recordings for potential AI-generated manipulation
+    \item \textbf{Online Meeting Integrity:} Supports detection of synthetic or manipulated voices during virtual meetings and remote collaboration tools
+    \item \textbf{Media and Content Verification:} Helps verify authenticity of audio content used in news, interviews, and public broadcasts
 \end{itemize}
