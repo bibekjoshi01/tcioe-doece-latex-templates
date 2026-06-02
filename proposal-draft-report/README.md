@@ -1,0 +1,1 @@
+Compile Live: latexmk -pdf -pvc -interaction=nonstopmode "main.tex"
