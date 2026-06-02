@@ -14,15 +14,15 @@ Figure~\ref{fig:system_block_diagram} presents the overall architecture of the p
 Unlike conventional deepfake detection approaches that operate on clean offline recordings, the proposed framework considers the complete communication pipeline through which speech is transmitted. During an RTC session, audio undergoes multiple transformations including signal acquisition, codec compression, packetization, network transmission, decoding, buffering, and receiver-side enhancement. These processes introduce distortions that may alter or suppress artifacts commonly used for deepfake detection. Therefore, the proposed system performs detection on the final reconstructed audio observed at the receiver side, closely reflecting real-world deployment conditions.
 
 The architecture consists of four major subsystems:
-
-\begin{enumerate}
-    \item Sender Side (RTC Client): Captures speech from the speaker, performs audio preprocessing, codec encoding, and packetization before transmission.
+\vspace{-0.5cm}
+\begin{enumerate}[label=\textbf{\arabic*.}]
+    \item \textbf{Sender Side (RTC Client):} Captures speech from the speaker, performs audio preprocessing, codec encoding, and packetization before transmission.
     
-    \item Network Transmission Layer: Transfers audio packets across IP-based networks where latency, jitter, packet loss, and routing variability may affect signal integrity.
+    \item \textbf{Network Transmission Layer:} Transfers audio packets across IP-based networks where latency, jitter, packet loss, and routing variability may affect signal integrity.
     
-    \item Receiver Side (RTC Client): Reconstructs the transmitted audio stream through packet reordering, jitter buffering, decoding, packet loss concealment, and audio enhancement operations.
+    \item \textbf{Receiver Side (RTC Client):} Reconstructs the transmitted audio stream through packet reordering, jitter buffering, decoding, packet loss concealment, and audio enhancement operations.
     
-    \item Audio Deepfake Detection Service (ADD): Operates as an external inference service that receives reconstructed audio from the receiver pipeline, extracts robust speech representations, performs deepfake classification, and generates spoofing risk assessments.
+    \item \textbf{Audio Deepfake Detection Service (ADD):} Operates as an external inference service that receives reconstructed audio from the receiver pipeline, extracts robust speech representations, performs deepfake classification, and generates spoofing risk assessments.
 \end{enumerate}
 
 The detection service is integrated through a non-intrusive plugin architecture, allowing it to operate independently from the RTC communication stack. This design enables compatibility with diverse RTC platforms while avoiding modifications to proprietary communication protocols or media processing components.
