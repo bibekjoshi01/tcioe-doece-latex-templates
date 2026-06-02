@@ -7,11 +7,11 @@ This service operates on short streaming windows rather than complete utterances
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{images/methodology/detection_service.jpg}
-    \caption{Audio deepfake detection service architecture}
+    \caption{Audio Deepfake Detection Service}
     \label{fig:detection_service}
 \end{figure}
 
-\subsubsection{Service Architecture and Integration Layer}
+\subsubsection{Service Architecture}
 
 The detection module is implemented as a stateless inference service exposed through gRPC or HTTP APIs. This architecture allows the RTC system to send audio segments to the detector without requiring modifications to the core communication stack.
 
@@ -38,8 +38,8 @@ where each \(x_t\) represents a short audio chunk extracted from \(x_{out}[n]\).
 
 The chunking strategy serves two purposes:
 \begin{itemize}
-    \item it reduces inference latency by enabling online processing,
-    \item it preserves local temporal context needed for reliable spoof detection.
+    \item It reduces inference latency by enabling online processing,
+    \item It preserves local temporal context needed for reliable spoof detection.
 \end{itemize}
 
 Overlapping windows are used to reduce instability near chunk boundaries and to ensure that short-lived artifacts are not missed due to segmentation. In practice, the detector produces one prediction per chunk, and these predictions are later aggregated into a stable decision.
@@ -81,7 +81,7 @@ The feature extraction module may include the following components:
 
 Self-supervised embeddings are particularly useful because they capture high-level speech structure and remain relatively robust under codec compression, packet loss, and receiver-side enhancement. Phoneme-aligned aggregation further reduces sensitivity to frame-level noise by summarizing features over more stable linguistic units.
 
-\textbf{Key idea:} the detector is not relying solely on raw waveform patterns; it operates on representations that retain both acoustic detail and contextual speech information.
+The detector is not relying solely on raw waveform patterns; it operates on representations that retain both acoustic detail and contextual speech information.
 
 \subsubsection{Classification Model Design}
 
@@ -160,26 +160,4 @@ The output can therefore be represented as
 R_t = \{s_t, \hat{d}_t, \text{timestamp}_t\}.
 \end{equation}
 
-This response enables real-time actions such as:
-\begin{itemize}
-    \item UI alerts,
-    \item call monitoring warnings,
-    \item logging for security analysis,
-    \item policy-based intervention by the RTC platform.
-\end{itemize}
-
-\subsubsection{End-to-End Detection Formulation}
-
-The complete operation of the detection service can be summarized as
-\begin{equation}
-\hat{d}_t = \mathcal{C}\big(F(P(x_{out}[n]))\big),
-\end{equation}
-where:
-\begin{itemize}
-    \item \(x_{out}[n]\) is the reconstructed receiver-side audio,
-    \item \(P(\cdot)\) denotes preprocessing,
-    \item \(F(\cdot)\) denotes feature extraction,
-    \item \(\mathcal{C}(\cdot)\) denotes classification.
-\end{itemize}
-
-This formulation reflects the complete inference pipeline used by the proposed system and defines the operational boundary between RTC audio reconstruction and deepfake decision making.
+This response enables real-time actions such as UI alerts, call monitoring warnings, logging for security analysis, and policy-based intervention by the RTC platform.
