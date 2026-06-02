@@ -1,13 +1,59 @@
-\begin{table}[h!]
-\centering
-\caption{Literature Matrix for IAQ Monitoring Systems}
-\begin{tabular}{|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{1.2cm}|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{3cm}|>{\raggedright\arraybackslash}p{3cm}|}
+\begin{longtable}{|
+    >{\raggedright\arraybackslash}p{4.3cm} |
+    >{\raggedright\arraybackslash}p{4.3cm} |
+    >{\raggedright\arraybackslash}p{4.1cm} |}
+
+\caption{Summary of Literature Review}
+\label{tab:literature-review} \\
 \hline
-\textbf{Author(s)} & \textbf{Year} & \textbf{Focus} & \textbf{Sensors/Tech} & \textbf{Key Findings} & \textbf{Limitations} \\ \hline
-Smith \& Johnson~\cite{smith2020iaq} & 2020 & Real-time IAQ monitoring & CO$_2$, PM2.5, VOC; IoT dashboard & Accurate real-time monitoring; visualizations; easy to deploy & No automated control; sensor cost high \\ \hline
-Lee \& Chen~\cite{lee2019aircontrol} & 2019 & Automated IAQ control & CO$_2$, PM2.5; HVAC integration & Effective control of IAQ in offices & Large-scale; expensive; not low-cost \\ \hline
-Patel \& Verma~\cite{patel2021pm25} & 2021 & Low-cost PM2.5 sensors & PM2.5 & Affordable monitoring; acceptable accuracy & Only PM2.5 measured; other pollutants ignored \\ \hline
-Brown~\cite{brown2018iot} & 2018 & IoT in environmental monitoring & IoT frameworks & Modular and scalable designs; can integrate multiple sensors & General principles; no prototype tested \\ \hline
-EPA~\cite{epa2021iaqguide} & 2021 & IAQ guidelines & General & Threshold-based alert system; emphasizes continuous monitoring & Guidelines; no system implementation \\ \hline
-\end{tabular}
-\end{table}
+\multicolumn{1}{|c|}{\parbox[c][2em][c]{4cm}{\centering \textbf{Title}}} &
+\multicolumn{1}{c|}{\parbox[c][2em][c]{4.5cm}{\centering \textbf{Methodology}}} &
+\multicolumn{1}{c|}{\parbox[c][2em][c]{4.5cm}{\centering \textbf{Key Inferences}}} \\
+\hline
+\textit{A Survey on Speech Deepfake Detection} (2024) \cite{Li2024_survey} 
+& Systematic analysis of over 200 publications (up to March 2024) covering the entire detection pipeline; Evaluates both fully synthetic and partially manipulated audio
+& Shift from handcrafted features toward deep embeddings from SSL models like wav2vec 2.0; OC-Softmax as a superior loss function 
+\\ \hline
+\textit{Towards the Development of a Real-Time Deepfake Audio Detection System in Communication Platforms}
+\cite{Mathew2024}
+&
+Evaluates models trained on ASVspoof 2019 under live Microsoft Teams communication streams. Assesses deployment performance using precision, recall, and F-score metrics.
+&
+Models trained on offline datasets degrade significantly in real communication environments due to compression and platform artifacts.
+\\ \hline
+\textit{RTCFake: Speech Deepfake Detection in Real-Time Communication}
+\cite{Xue2025_RTCFake}
+&
+Constructs a 600-hour dataset through real-world black-box transmission across seven communication platforms including Zoom and WeChat. Proposes \textbf{Phoneme-Guided Consistency Learning (PCL)} to learn platform-invariant speech representations.
+&
+RTC transmission introduces severe domain mismatch not captured by traditional datasets such as ASVspoof. Phoneme-level representations remain more stable than frame-level acoustic features under platform-induced distortions, improving generalization across unseen communication platforms.
+\\ \hline
+\textit{ASVspoof 5: Crowdsourced Speech Data, Deepfakes, and Adversarial Attacks at Scale}
+\cite{Wang2024_asv5}
+&
+Introduces crowdsourced speech recordings, neural audio codecs, and adversarial attacks targeting both deepfake detection and speaker verification systems.
+&
+Neural codecs and adversarial perturbations significantly reduce detector reliability; robust calibration is required.
+\\ \hline
+\textit{Real-Time Detection of AI-Generated Speech for Deepfake Voice Conversion}
+\cite{Bird2023}
+&
+Introduces the DEEP-VOICE dataset and evaluates lightweight machine learning algorithms including Random Forest and XGBoost for short-window real-time inference.
+&
+XGBoost achieves high detection performance with extremely low inference latency, demonstrating that optimized traditional machine learning approaches remain viable for edge and real-time deployment scenarios.
+\\ \hline
+\textit{Benchmarking Audio Deepfake Detection Robustness in Real-World Communication Scenarios}
+\cite{Shi2024}
+&
+Introduces the \textbf{ADD-C benchmark}, simulating six communication codecs and packet loss rates ranging from 0\% to 20\%. 
+&
+Models such as LCNN and AASIST experience performance decreases with increasing packet loss; codec-aware augmentation improves robustness.
+\\ \hline
+\textit{MultiAPI Spoof: A Multi-API Dataset and Local-Attention Network for Speech Anti-Spoofing Detection}
+\cite{Zhang2025_MultiAPI}
+&
+Constructs a dataset containing spoofed speech generated from 30 different APIs and proposes a Local-Attention enhanced Nes2Net architecture for fine-grained feature learning.
+&
+Source diversity significantly affects detector generalization. Local-attention mechanisms improve robustness across different synthesis systems, while API tracing introduces attribution as an emerging research direction.
+\\ \hline
+\end{longtable}
