@@ -1,0 +1,65 @@
+\newpage
+\section{LITERATURE REVIEW}
+
+The rapid evolution of Artificial Intelligence (AI) and deep learning has enabled the creation of highly realistic synthetic media, commonly known as "deepfakes" \cite{Reddy2025, Raza2026}. While deepfake research initially focused on video, achieving high accuracy in detecting manipulated facial movements, audio deepfake detection has emerged as a critical and urgent challenge \cite{Reddy2025, Yamagishi2021}. These synthetic voices, which mimic human subtleties like tone, rhythm, and accent, are increasingly used for identity theft, misinformation, and financial fraud \cite{Reddy2025, Li2024_survey}. Recent incidents have demonstrated the severity of the threat, such as scammers using AI-impersonated voices to obtain fraudulent money transfers worth hundreds of thousands of dollars \cite{Pianese2022, Mathew2024, Xue2025_RTCFake}. Protecting Real-Time Communication (RTC) systems, such as VoIP and video conferencing, is particularly vital as these platforms have become cornerstones of identity verification in modern digital interactions \cite{Mathew2024, Wang2024_asv5}.
+
+\subsection{Evolution of Synthetic Speech and Voice Cloning}
+
+Audio deepfakes are generally categorised into two primary techniques: Text-to-Speech (TTS) and Voice Conversion (VC) \cite{Li2024_survey, Azzuni2024}.
+
+Speech synthesis, or TTS, converts textual input into speech that emulates a target speaker's voice \cite{Reddy2025, Li2024_survey}. Traditional parametric and concatenative methods often produced "robotic" sounds, but modern deep learning has shifted the field toward neural vocoders and autoregressive models like Tacotron 2, DeepVoice, and FastSpeech, which generate highly natural-sounding speech \cite{Azzuni2024, ZhangB2025}.
+
+Voice conversion involves modifying the vocal characteristics of a source speaker to mimic a target speaker while preserving the original linguistic content \cite{Li2024_survey, Azzuni2024}. Modern VC systems often utilize End-to-End (E2E) architectures, employing neural vocoders like HiFi-GAN and flow-based models to achieve real-time, high-fidelity conversion \cite{Azzuni2024, Bird2023}.
+
+Voice cloning is the process of adapting a TTS system to unseen speakers, often categorized as few-shot or zero-shot cloning \cite{Azzuni2024}. Zero-shot cloning is particularly dangerous as it requires only a short audio clip (as little as a few seconds) to generate speech with the target's voice characteristics without needing to fine-tune the model \cite{Azzuni2024, Wang2024_asv5}.
+
+Current landscapes include Generative Adversarial Networks (GANs), Variational Autoencoders (VAEs), and Diffusion Models \cite{Reddy2025, Azzuni2024}. Recent models like VALL-E treat speech synthesis as a conditional language modelling task using Large Language Models (LLMs) and neural audio codecs to achieve human-parity synthesis \cite{Azzuni2024, Wang2024_asv5}.
+
+
+\subsection{Rise of Audio Deepfake Detection}
+
+Detection systems typically consist of a front-end feature extractor and a back-end classifier \cite{Li2024_survey, ZhangB2025}.
+
+Early systems relied on handcrafted acoustic features:
+
+\begin{itemize}
+\item Mel-Frequency Cepstral Coefficients (MFCCs): Represent the short-term power spectrum and are effective for clean environments \cite{Reddy2025, Li2024_survey}.
+\item Linear Frequency Cepstral Coefficients (LFCCs): Retain more detailed high-frequency information, suitable for detecting spectral distortions in deepfakes \cite{Li2024_survey, Shi2024}.
+\item Constant Q Cepstral Coefficients (CQCCs): A standard baseline in ASVspoof challenges used to capture anomalies in the time-frequency domain \cite{Li2024_survey, Shi2024}.
+\end{itemize}
+
+Modern detectors leverage sophisticated neural architectures like Convolutional Neural Networks (CNNs) for capturing spectrogram artifacts, and Recurrent Neural Networks (RNNs/LSTMs) for detecting irregularities in speech rhythm and prosody \cite{Reddy2025, Li2024_survey}. Models like AASIST use Graph Neural Networks (GNNs) to model complex spectro-temporal dependencies \cite{Li2024_survey, Xue2025_RTCFake}.
+
+SSL models pre-trained on massive unlabeled datasets have revolutionized detection. Models such as wav2vec 2.0, XLS-R, and WavLM generate high-quality contextual representations that excel in cross-lingual and out-of-domain scenarios \cite{Pianese2022, Li2024_survey, ZhangB2025}.
+
+Key datasets include the ASVspoof challenge series (2015–2024), providing standardized evaluations for synthetic speech \cite{Yamagishi2021, Wang2024_asv5, Li2024_survey}. Other datasets like In-the-Wild (ITW) and WaveFake introduce more diverse generative models and real-world conditions \cite{Li2024_survey, ZhangB2025}.
+
+\subsection{Real-Time Communication (RTC) Systems}
+
+RTC systems introduce unique signal alterations that impact detection performance \cite{Mathew2024, Xue2025_RTCFake}. The "black-box" processing pipeline of RTC platforms typically includes sender-side pre-processing (noise suppression, echo cancellation), encoding, network transmission (subject to jitter and packet loss), and receiver-side post-processing (gain control, bandwidth extension) \cite{Xue2025_RTCFake}.
+
+Codecs such as Opus, SILK, EVS, and AMR-WB are used to compress digital audio \cite{Xue2025_RTCFake, Shi2024}. These significantly impact audio factors like Signal-to-Noise Ratio (SNR) and energy loss, often erasing subtle forgery cues \cite{Pham2024, Shi2024}. Network-induced data loss and timing variations degrade the performance of feature-based systems. Packet Loss Rates (PLR) in wireless channels can introduce distorted transmissions, reducing the robustness of deepfake detectors \cite{Shi2024}.
+
+\subsection{Impact of RTC Distortions on Deepfake Detection}
+
+Existing models trained on clean audio often fail to generalize to degraded VoIP environments \cite{Mathew2024, Shi2024}. Compression results in the loss of high-frequency information, which is critical for features like LFCC \cite{Li2024_survey, Shi2024}. Research shows that models trained on static recordings suffer significant performance declines when challenged with codec-distorted audio \cite{Mathew2024, Shi2024}.
+
+The combined effects of compression and network-induced packet loss significantly reduce speech quality \cite{Shi2024}. Benchmarking has shown that models like GMM-CQCC and LCNN-LFCC exhibit systematic declines in robustness as PLR increases \cite{Shi2024}. Variation in processing logic across different platforms (e.g., Zoom vs. WeChat) leads to significantly different distortion distributions, posing a major challenge for model generalization \cite{Xue2025_RTCFake}.
+
+\subsection{Recent Research on RTC-Aware Deepfake Detection}
+
+Recent efforts include the RTCFake dataset, which captures real-world black-box distortions from mainstream platforms \cite{Xue2025_RTCFake}, and the ADD-C test dataset, designed to evaluate robustness under multiple codecs and PLRs \cite{Shi2024}. The Phoneme-Guided Consistency Learning (PCL) strategy has been proposed to learn platform-invariant features \cite{Xue2025_RTCFake}.
+
+Current systems often lack analysis for low-latency deployment on edge devices like smartphones \cite{Pham2024}. Furthermore, models trained exclusively on online or offline data suffer from severe domain mismatch \cite{Xue2025_RTCFake, Mathew2024}.
+
+\subsection{Research Gap Analysis}
+
+Despite progress, critical gaps remain:
+\vspace{-0.5cm}
+\begin{enumerate}
+\item Systematic RTC Impact: Limited research exists on the combined impact of codec compression, packet loss, and noise on both detection performance and latency \cite{Shi2024, Pham2024}.
+\item Resource Constraints: There is a lack of lightweight models optimized for real-time inference in resource-constrained RTC environments \cite{Pham2024, Bird2023}.
+\item Real-World Transmission: Most datasets rely on simulated distortions rather than real-world black-box transmission \cite{Xue2025_RTCFake}.
+\end{enumerate}
+
+

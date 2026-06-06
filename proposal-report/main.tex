@@ -1,0 +1,51 @@
+\documentclass[12pt,a4paper]{article}
+
+% Styles
+\input{styles}
+
+% Document Starting
+% ---------------------------------------------------------------
+\begin{document}
+
+% --- Frontmatter ---
+\pagenumbering{roman}
+\input{frontmatter/cover_page}
+\input{frontmatter/abstract}
+\input{frontmatter/toc}
+\input{frontmatter/list_of_abbreviations}
+
+% --- Main content ---
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% Introduction
+\input{sections/introduction/index}
+
+% Literature Review
+\input{sections/literature_review/index}
+\input{sections/literature_review/matrix}
+
+% Requirement Analysis
+\input{sections/requirement_analysis/index}
+
+% Methodology
+\input{sections/methodology/index}
+
+% Expected Outcomes
+\input{sections/expected_outcomes/index}
+
+% Feasibility Study
+\input{sections/feasibiity_study/index}
+
+% Appendices
+\input{sections/appendices/index}
+
+\newpage
+\phantomsection
+\addcontentsline{toc}{section}{References}  
+\bibliographystyle{ieeetr}
+\nocite{*}  
+\bibliography{references}
+
+\end{document}

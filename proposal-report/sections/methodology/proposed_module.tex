@@ -1,0 +1,163 @@
+\subsection{Audio Deepfake Detection Service}
+
+The audio deepfake detection service is the core inference component of the proposed system. It receives reconstructed receiver-side audio and performs low-latency analysis to determine whether the speech segment is real or synthetic. In contrast to tightly coupled end-to-end RTC implementations, the proposed design isolates deepfake detection as an independent service that can be integrated into different RTC/VoIP platforms through a standard API layer.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{images/methodology/detection_service.png}
+    \caption{Audio Deepfake Detection Service}
+    \label{fig:detection_service}
+\end{figure}
+
+This service operates on short streaming windows rather than complete utterances, which makes it suitable for real-time deployment. Its output is a probabilistic decision that can be consumed by the RTC application for alert generation, monitoring, or downstream security enforcement.
+
+\subsubsection{Service Architecture}
+
+The detection module is implemented as a stateless inference service exposed through gRPC or HTTP APIs. This architecture allows the RTC system to send audio segments to the detector without requiring modifications to the core communication stack.
+
+Let the reconstructed receiver-side audio be denoted as $x_{out}[n]$.
+
+The RTC client or receiver component forwards successive audio chunks to the detection service, which processes each chunk independently while preserving limited contextual information for temporal stability. The service can therefore be deployed in different environments, including:
+\begin{itemize}
+    \item centralized cloud servers,
+    \item edge nodes close to the RTC application,
+    \item embedded deployment within a monitored communication platform.
+\end{itemize}
+
+This separation improves modularity, scalability, and maintainability. It also allows the deepfake detector to be updated independently of the RTC transmission pipeline.
+
+\subsubsection{Stream Ingestion and Chunking Strategy}
+
+Because RTC systems operate on continuous audio streams, the detection service processes audio in short overlapping windows rather than waiting for an entire conversation to complete. Let the incoming reconstructed stream be segmented into windows of length \(L\) with overlap \(O\).
+
+The streaming input can be written as
+\begin{equation}
+X = \{x_1, x_2, \ldots, x_T\},
+\end{equation}
+where each \(x_t\) represents a short audio chunk extracted from \(x_{out}[n]\).
+
+The chunking strategy serves two purposes:
+\begin{itemize}
+    \item It reduces inference latency by enabling online processing,
+    \item It preserves local temporal context needed for reliable spoof detection.
+\end{itemize}
+
+Overlapping windows are used to reduce instability near chunk boundaries and to ensure that short-lived artifacts are not missed due to segmentation. In practice, the detector produces one prediction per chunk, and these predictions are later aggregated into a stable decision.
+
+\subsubsection{Preprocessing for Inference}
+
+Before feature extraction, each input chunk is normalized and prepared for model inference. This preprocessing stage is lightweight and deterministic so that it does not introduce unnecessary latency.
+
+Typical preprocessing operations include:
+\begin{itemize}
+    \item resampling to a fixed sampling rate,
+    \item amplitude normalization,
+    \item trimming of silence or non-speech padding,
+    \item fixed-length padding for short segments.
+\end{itemize}
+
+The result is a standardized audio segment suitable for feature extraction:
+\begin{equation}
+\tilde{x}_t = P(x_t),
+\end{equation}
+where \(P(\cdot)\) denotes the preprocessing function and \(\tilde{x}_t\) is the normalized input chunk.
+
+\subsubsection{Feature Extraction Pipeline}
+
+The feature extraction stage converts the preprocessed waveform into representations that expose differences between genuine and synthetic speech. In the proposed framework, this is achieved using self-supervised speech representations and, optionally, phoneme-aligned features.
+
+Let
+\begin{equation}
+z_t = F(\tilde{x}_t),
+\end{equation}
+where \(F(\cdot)\) denotes the feature extraction function and \(z_t\) is the resulting feature embedding.
+
+The feature extraction module may include the following components:
+\begin{itemize}
+    \item \textbf{Self-supervised speech embeddings:} contextual representations obtained from pretrained models such as WavLM or XLSR,
+    \item \textbf{Frame-level descriptors:} local acoustic embeddings preserving short-time spectral and temporal patterns,
+    \item \textbf{Phoneme-aligned aggregation:} optional grouping of frame-level features into linguistically meaningful units.
+\end{itemize}
+
+Self-supervised embeddings are particularly useful because they capture high-level speech structure and remain relatively robust under codec compression, packet loss, and receiver-side enhancement. Phoneme-aligned aggregation further reduces sensitivity to frame-level noise by summarizing features over more stable linguistic units.
+
+The detector is not relying solely on raw waveform patterns; it operates on representations that retain both acoustic detail and contextual speech information.
+
+\subsubsection{Classification Model Design}
+
+The classification module maps the extracted representation \(z_t\) to a spoofing probability. The model is intentionally compact so that inference remains feasible in real-time RTC conditions.
+
+The classifier is defined as
+\begin{equation}
+\hat{y}_t = \mathcal{C}(z_t),
+\end{equation}
+where \(\mathcal{C}(\cdot)\) denotes the classification network and \(\hat{y}_t\) is the predicted spoofing score for chunk \(t\).
+
+The classification network may be implemented using a lightweight architecture such as:
+\begin{itemize}
+    \item a compact convolutional backend,
+    \item a shallow recurrent module,
+    \item an attention-based aggregator with limited depth.
+\end{itemize}
+
+The model outputs a probability value
+\begin{equation}
+s_t \in [0,1],
+\end{equation}
+where higher values indicate a higher likelihood of synthetic speech.
+
+For binary decision-making, a threshold \(\tau\) is applied:
+\begin{equation}
+\hat{d}_t =
+\begin{cases}
+1, & s_t \geq \tau \\
+0, & s_t < \tau
+\end{cases}
+\end{equation}
+where \(\hat{d}_t = 1\) denotes spoofed speech and \(\hat{d}_t = 0\) denotes bona fide speech.
+
+\subsubsection{Temporal Aggregation and Decision Stabilization}
+
+Since inference is performed on successive streaming chunks, individual predictions may fluctuate due to short-term artifacts, transient packet loss, or local noise variation. To improve decision stability, the proposed system applies temporal aggregation over a sliding window of recent predictions.
+
+Let the set of recent spoofing scores be
+\begin{equation}
+S_t = \{s_{t-k+1}, s_{t-k+2}, \ldots, s_t\},
+\end{equation}
+where \(k\) is the aggregation window size.
+
+A smoothed score can be computed as
+\begin{equation}
+\bar{s}_t = A(S_t),
+\end{equation}
+where \(A(\cdot)\) denotes the aggregation function. In implementation, this may be a moving average, weighted average, or majority-based smoothing rule.
+
+The final decision is then obtained from the aggregated score:
+\begin{equation}
+\hat{d}_t =
+\begin{cases}
+1, & \bar{s}_t \geq \tau \\
+0, & \bar{s}_t < \tau
+\end{cases}
+\end{equation}
+
+This stabilization step reduces false alarms caused by isolated distortions and produces a more reliable real-time output for the RTC application.
+
+\subsubsection{Output Interface and Response Format}
+
+The detection service returns a structured output to the RTC system through the same API channel used for audio ingestion. The response contains both a continuous risk score and a discrete decision label.
+
+A typical output may include:
+\begin{itemize}
+    \item spoofing probability score \(s_t\),
+    \item binary class label \(\hat{d}_t\),
+    \item optional confidence value,
+    \item optional timestamp or chunk identifier.
+\end{itemize}
+
+The output can therefore be represented as
+\begin{equation}
+R_t = \{s_t, \hat{d}_t, \text{timestamp}_t\}.
+\end{equation}
+
+This response enables real-time actions such as UI alerts, call monitoring warnings, logging for security analysis, and policy-based intervention by the RTC platform.
