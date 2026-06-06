@@ -1,13 +1,14 @@
 \subsection{Audio Deepfake Detection Service}
 
-The audio deepfake detection service is the core inference component of the proposed system. It receives reconstructed receiver-side audio and performs low-latency analysis to determine whether the speech segment is real or synthetic. In contrast to tightly coupled end-to-end RTC implementations, the proposed design isolates deepfake detection as an independent service that can be integrated into different RTC/VoIP platforms through a standard API layer.
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{images/methodology/detection_service.png}
+    \vspace{0.25cm}
     \caption{Audio Deepfake Detection Service}
     \label{fig:detection_service}
 \end{figure}
+
+The audio deepfake detection service is the core inference component of the proposed system. It receives reconstructed receiver-side audio and performs low-latency analysis to determine whether the speech segment is real or synthetic. In contrast to tightly coupled end-to-end RTC implementations, the proposed design isolates deepfake detection as an independent service that can be integrated into different RTC/VoIP platforms through a standard API layer.
 
 This service operates on short streaming windows rather than complete utterances, which makes it suitable for real-time deployment. Its output is a probabilistic decision that can be consumed by the RTC application for alert generation, monitoring, or downstream security enforcement.
 

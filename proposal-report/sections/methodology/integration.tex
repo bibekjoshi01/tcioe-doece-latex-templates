@@ -2,8 +2,6 @@
 
 The integration strategy defines how the proposed audio deepfake detection service is connected to real-world real-time communication (RTC) environments without requiring modifications to the core RTC application. Since many RTC platforms, including WebRTC-based systems, VoIP services, and conferencing applications, operate as closed or partially restricted ecosystems, the proposed detector is designed as an external service-oriented component that interfaces with the RTC pipeline through standardized audio streaming access points.
 
-The primary objective of this integration layer is to enable continuous detection on reconstructed audio streams while preserving the real-time properties of the communication system. The detector is therefore deployed as a parallel inference component rather than as an in-band modification of the RTC stack.
-
 \vspace{0.5cm}
 \begin{figure}[H]
     \centering
@@ -11,6 +9,8 @@ The primary objective of this integration layer is to enable continuous detectio
     \caption{Integration of Detection Service with RTC systems}
     \label{fig:integration_strategy}
 \end{figure}
+
+The primary objective of this integration layer is to enable continuous detection on reconstructed audio streams while preserving the real-time properties of the communication system. The detector is therefore deployed as a parallel inference component rather than as an in-band modification of the RTC stack.
 
 \subsubsection{Deployment Modes}
 
