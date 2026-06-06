@@ -3,7 +3,7 @@
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{images/methodology/receiver_side.png}
-    \caption{Receiver-side RTC reconstruction pipeline}
+    \caption{Receiver-side RTC Reconstruction Pipeline}
     \label{fig:receiver_side}
 \end{figure}
 
@@ -35,6 +35,18 @@ The packet reception stage therefore performs the following operations:
 
 Perfect reconstruction is not guaranteed when packet loss, delay variation, or reordering occurs.
 
+\subsubsection{Packet Authentication and Decryption}
+
+Received packets are first subjected to integrity verification to ensure that they have not been modified during transmission. Following successful verification, the encrypted payload is decrypted using the session keys established during call setup.
+
+This process restores the original compressed audio data while maintaining confidentiality and protection against unauthorized access.
+
+\subsubsection{Depacketization}
+
+After decryption, the Real-Time Transport Protocol (RTP) headers are analyzed. Sequence numbers and timestamps contained within the packet headers provide information about packet ordering and playback timing.
+
+These metadata fields enable the receiver to identify missing packets, detect out-of-order arrivals, and reconstruct the original audio sequence.
+
 \subsubsection{Jitter Buffer and Stream Stabilization}
 
 Since packets may arrive with irregular timing, RTC systems typically employ a jitter buffer to stabilize playback. The jitter buffer temporarily stores incoming packets and releases them at a controlled rate so that the downstream decoder receives a more regular stream.
@@ -61,19 +73,25 @@ Although PLC improves perceptual continuity, it also introduces synthetic artifa
 \subsubsection{Audio Decoding Process}
 
 After buffering and concealment, the compressed payloads are passed to the codec decoder to reconstruct waveform samples. The decoder transformation can be modeled as
+
 \begin{equation}
 \hat{x}[n] = D(x_c),
 \end{equation}
-where \(x_c\) is the compressed bitstream and \(\hat{x}[n]\) is the decoded discrete-time audio signal.
 
-The decoding process is codec-dependent:
+where $x_c$ denotes the compressed bitstream and $\hat{x}[n]$ represents the reconstructed discrete-time speech signal.
+
+The characteristics of the reconstructed signal depend on the codec employed during transmission:
+
 \begin{itemize}
-    \item \textbf{Opus:} low-latency speech and music decoding with adaptive bitrate support,
-    \item \textbf{G.711:} near-PCM expansion with minimal codec complexity,
-    \item \textbf{AAC:} transform-domain decoding with perceptual reconstruction.
+\item \textbf{Opus:} The most widely used codec in modern RTC systems. Opus combines linear prediction and transform-based coding techniques with adaptive bitrate control. During decoding, quantization artifacts, spectral smoothing, bandwidth limitations, and temporal distortions may be introduced, particularly under low-bitrate operating conditions.
+
+\item \textbf{G.711:} A waveform-based codec commonly used in traditional telephony systems. Decoding primarily involves inverse companding, resulting in relatively low algorithmic distortion but offering limited bandwidth efficiency compared to modern codecs.
+
+\item \textbf{AAC:} A transform-domain codec that employs perceptual audio coding techniques. Reconstruction may introduce quantization noise and perceptual smoothing effects, particularly in high-frequency regions of the spectrum.
+
 \end{itemize}
 
-In general, decoding is not perfectly lossless. Even in the absence of network impairments, codec reconstruction introduces approximation error, quantization effects, and spectral smoothing. The decoded signal preserves intelligibility, but not full fidelity with respect to the original speech waveform.
+In general, decoding is not a lossless process. Even under ideal network conditions, codec reconstruction introduces approximation errors due to compression and quantization. Consequently, the reconstructed signal preserves speech intelligibility while potentially altering fine-grained acoustic characteristics that may be relevant for deepfake detection. 
 
 \subsubsection{Receiver-Side Audio Enhancement}
 

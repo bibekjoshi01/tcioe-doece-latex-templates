@@ -14,7 +14,7 @@ In the proposed framework, the network layer is treated as a black-box transmiss
 
 \subsubsection{Packet Routing in IP Networks}
 
-After packetization, audio packets are transmitted through packet-switched IP networks using transport protocols such as UDP, commonly combined with the Real-time Transport Protocol (RTP).
+After packetization and encryption, audio packets are transmitted through packet-switched IP networks using transport protocols such as UDP, commonly combined with the Real-time Transport Protocol (RTP).
 
 Packets traverse multiple intermediate routing nodes before reaching the receiver. Due to dynamic routing decisions and varying network conditions, packet delivery is not guaranteed to preserve timing consistency and may exhibit variable delays.
 
@@ -47,8 +47,6 @@ As a result, the received packet sequence may differ from the transmitted sequen
 \end{equation}
 where $m \leq n$, indicating that some transmitted packets may be delayed, reordered, or lost during transmission.
 
-These impairments are typically non-stationary and time-varying, which makes accurate modeling challenging.
-
 \subsubsection{RTC Channel Characteristics}
 
 In practical RTC environments, network impairments interact with codec behavior and adaptive communication mechanisms. Modern RTC systems dynamically adjust transmission parameters in response to changing network conditions.
@@ -75,8 +73,10 @@ Major consequences include:
 \item Loss of fine-grained temporal information
 \item Discontinuities caused by missing packets
 \item Distortion of spectral characteristics
-\item Temporal inconsistencies between adjacent speech segments
+\item Irregular playback due to high jitter
 \end{itemize}
+
+To maintain acceptable voie quality, real-time communication systems must be designed to tolerate these impairments through techniques such as adaptive encoding, buffering, packet sequencing, and error concealment.
 
 The overall transformation from transmitted speech to received speech can be represented as
 \begin{equation}
@@ -89,7 +89,6 @@ where
 \item $T_{net}(\cdot)$ represents the network transmission effects,
 \item $x_r(t)$ is the received speech signal.
 \end{itemize}
-
 
 \begin{figure}[H]
     \centering
