@@ -3,11 +3,11 @@
     \centering
     \includegraphics[width=1\textwidth]{images/methodology/system_block_diagram.png}
     \vspace{0.25cm}
-    \caption{High-Level Architecture of the Proposed System}
+    \caption{High-Level Design of the Proposed System}
     \label{fig:system_block_diagram}
 \end{figure}
 
-Figure~\ref{system_block_diagram} presents the overall architecture of the proposed RTC-aware Audio Deepfake Detection (ADD) framework. The system is designed to detect synthetic speech during live communication sessions by operating on audio streams that have undergone realistic real-time communication (RTC) processing and transmission.
+Figure~\ref{fig:system_block_diagram} presents the overall architecture of the proposed RTC-aware Audio Deepfake Detection (ADD) framework. The system is designed to detect synthetic speech during live communication sessions by operating on audio streams that have undergone realistic real-time communication (RTC) processing and transmission.
 
 Unlike conventional deepfake detection approaches that operate on clean offline recordings, the proposed framework considers the complete communication pipeline through which speech is transmitted between users. During an RTC session, audio is captured at the sender side, compressed using communication codecs, packetized for network transport, transmitted across IP networks, reconstructed at the receiver side, and finally delivered for playback. Throughout this process, the speech signal experiences multiple transformations including codec compression, packet loss recovery, jitter buffering, and audio enhancement. These operations may alter or suppress artifacts commonly exploited by deepfake detection systems. Therefore, the proposed framework performs detection on the final reconstructed speech signal observed at the receiver side, closely reflecting practical deployment conditions.
 
