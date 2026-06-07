@@ -5,16 +5,19 @@
 
 \vspace{0.5cm}
 
-\label{app:gantt_char}
+\label{app:gantt_chart}
 \renewcommand{\thetable}{B-\arabic{table}}
 \setcounter{table}{0} 
 
 \begin{table}[H]
 \centering
-\caption{Expected Project Timeline -- Part A}
-\label{tab:gantt_chart}
-
-% Include image without nesting figure
-\includegraphics[width=1\textwidth]{images/gantt_chart.png}
-
+\rotatebox{90}{%
+  \begin{minipage}{0.85\textheight}
+  \centering
+  \caption{Expected Project Timeline -- Part A}
+  \vspace{0.25cm}
+  \label{tab:gantt_chart}
+  \includegraphics[width=\linewidth]{images/gantt_chart.png}
+  \end{minipage}
+}
 \end{table}
