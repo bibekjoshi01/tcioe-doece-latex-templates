@@ -45,6 +45,6 @@ For each input chunk, the service returns an inference result consisting of a sp
 
 \subsubsection{Scalability and Latency Considerations}
 
-RTC applications impose strict latency requirements, so the detection system is designed to operate under bounded inference delay. To maintain responsiveness, the service processes fixed-size audio chunks instead of full utterances and uses compact feature extractors and lightweight classifiers at runtime.
+RTC applications impose strict latency requirements, so the detection system is designed to operate under bounded inference delay. To maintain responsiveness, the service processes fixed-size audio chunks instead of full utterances and uses compact feature extractors at runtime.
 
 Scalability is achieved through horizontal replication of the detection service behind a load balancer. This allows multiple concurrent RTC sessions to be processed in parallel without significant performance degradation. To further reduce runtime overhead, heavy feature extraction components may rely on pretrained encoders that remain frozen during inference. This design balances detection accuracy with real-time constraints and ensures that the system can operate reliably in live RTC environments.

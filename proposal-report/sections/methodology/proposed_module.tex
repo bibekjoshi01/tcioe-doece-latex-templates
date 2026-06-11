@@ -9,13 +9,13 @@
     \label{fig:detection_service}
 \end{figure}
 
-The audio deepfake detection service is the core inference component of the proposed system. It receives reconstructed receiver-side audio and performs low-latency analysis to determine whether the speech segment is real or synthetic. In contrast to tightly coupled end-to-end RTC implementations, the proposed design isolates deepfake detection as an independent service that can be integrated into different RTC/VoIP platforms through a standard API layer.
+The audio deepfake detection service is the core inference component of the proposed system. It receives reconstructed receiver-side audio and performs analysis to determine whether the speech segment is real or synthetic. In contrast to tightly coupled end-to-end RTC implementations, the proposed design isolates deepfake detection as an independent service that can be integrated into different RTC/VoIP platforms through a standard API layer.
 
 This service operates on short streaming windows rather than complete utterances, which makes it suitable for real-time deployment. Its output is a probabilistic decision that can be consumed by the RTC application for alert generation, monitoring, or downstream security enforcement.
 
 \subsubsection{Service Architecture}
 
-The detection module is implemented as a stateless inference service exposed through gRPC or HTTP APIs. This architecture allows the RTC system to send audio segments to the detector without requiring modifications to the core communication stack.
+The detection module is implemented as a stateless inference service exposed through gRPC or HTTP APIs. This architecture allows the RTC system to send continuous stream to the detector without requiring modifications to the core communication stack.
 
 Let the reconstructed receiver-side audio be denoted as $x_{out}[n]$.
 
@@ -28,7 +28,7 @@ The RTC client or receiver component forwards successive audio chunks to the det
 
 This separation improves modularity, scalability, and maintainability. It also allows the deepfake detector to be updated independently of the RTC transmission pipeline.
 
-\subsubsection{Stream Ingestion and Chunking Strategy}
+\subsubsection{Stream Ingestion and Buffer Manager}
 
 Because RTC systems operate on continuous audio streams, the detection service processes audio in short overlapping windows rather than waiting for an entire conversation to complete. Let the incoming reconstructed stream be segmented into windows of length \(L\) with overlap \(O\).
 
@@ -46,17 +46,20 @@ The chunking strategy serves two purposes:
 
 Overlapping windows are used to reduce instability near chunk boundaries and to ensure that short-lived artifacts are not missed due to segmentation. In practice, the detector produces one prediction per chunk, and these predictions are later aggregated into a stable decision.
 
-\subsubsection{Preprocessing for Inference}
+\subsubsection{Audio Preprocessing Module}
 
 Before feature extraction, each input chunk is normalized and prepared for model inference. This preprocessing stage is lightweight and deterministic so that it does not introduce unnecessary latency.
 
 Typical preprocessing operations include:
 \begin{itemize}
-    \item resampling to a fixed sampling rate,
-    \item amplitude normalization,
-    \item trimming of silence or non-speech padding,
+    \item \textbf{Resampling} to a fixed sampling rate (~16KHz) to match the training data.
+    \item \textbf{Amplitude Normalization} standardizes the volumne levels.
+    \item \textbf{Pre-emphasis} Applies a first order high-pass filter to amplify high frequency components.
+    \item Trimming of silence or non-speech padding to mitigate variations caused by different microphones or sender side gain control,
     \item fixed-length padding for short segments.
 \end{itemize}
+
+Pre-emphasis is critical because RTC codecs often supress high frequencies yet these bands often contain the subtle spectral cus left by synthetic vocoders. 
 
 The result is a standardized audio segment suitable for feature extraction:
 \begin{equation}
@@ -66,7 +69,7 @@ where \(P(\cdot)\) denotes the preprocessing function and \(\tilde{x}_t\) is the
 
 \subsubsection{Feature Extraction Pipeline}
 
-The feature extraction stage converts the preprocessed waveform into representations that expose differences between genuine and synthetic speech. In the proposed framework, this is achieved using self-supervised speech representations and, optionally, phoneme-aligned features.
+The feature extraction stage converts the preprocessed waveform into representations that expose differences between real and synthetic speech. In the proposed framework, the system extracts two complementary views of audio simultaneously.
 
 Let
 \begin{equation}
@@ -74,7 +77,7 @@ z_t = F(\tilde{x}_t),
 \end{equation}
 where \(F(\cdot)\) denotes the feature extraction function and \(z_t\) is the resulting feature embedding.
 
-The feature extraction module may include the following components:
+The feature extraction module includes the following components:
 \begin{itemize}
     \item \textbf{Self-supervised speech embeddings:} contextual representations obtained from pretrained models such as WavLM or XLSR,
     \item \textbf{Frame-level descriptors:} local acoustic embeddings preserving short-time spectral and temporal patterns,
@@ -149,7 +152,7 @@ This stabilization step reduces false alarms caused by isolated distortions and 
 
 The detection service returns a structured output to the RTC system through the same API channel used for audio ingestion. The response contains both a continuous risk score and a discrete decision label.
 
-A typical output may include:
+A typical output contains:
 \begin{itemize}
     \item spoofing probability score \(s_t\),
     \item binary class label \(\hat{d}_t\),
