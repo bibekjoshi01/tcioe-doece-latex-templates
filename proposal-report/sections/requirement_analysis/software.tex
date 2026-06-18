@@ -4,115 +4,93 @@
 The proposed Audio Deepfake Detection (ADD) framework consists of multiple interacting components, including RTC communication infrastructure, audio processing modules, machine learning models, deployment services, and system integration layers. Consequently, a diverse software ecosystem is required to support development, experimentation, deployment, and evaluation. The software requirements are categorized according to their functional roles within the system architecture.
 
 \subsubsection{Operating System and Development Environment}
-
-\begin{enumerate}[label=\textbf{\arabic*.}]
-
-\item \textbf{Operating System (Linux, Windows, or macOS)}
+\vspace{0.5cm}
+\textbf{Operating System}
 
 The proposed system can be developed and executed on modern operating systems including Linux, Windows, and macOS. Linux-based environments are particularly suitable for machine learning training, server deployment, and containerized applications due to their stability, performance, and compatibility with GPU acceleration frameworks.
 
-\item \textbf{Integrated Development Environment (IDE)}
+\textbf{Integrated Development Environment (IDE)}
 
 An Integrated Development Environment is required for software development, debugging, testing, and project management. Visual Studio Code is recommended due to its extensive support for Python, Go, Docker, and version control integration. The IDE facilitates efficient development and maintenance of both RTC and machine learning components.
 
-\item \textbf{Version Control System (Git)}
+\textbf{Version Control System}
 
 Git is used for source code management and version tracking throughout the software development lifecycle. It enables experiment reproducibility, collaborative development, code backup, and systematic management of project changes.
 
-\end{enumerate}
 
 \subsubsection{Programming Languages}
-
-\begin{enumerate}[label=\textbf{\arabic*.}]
-
-\item \textbf{Python 3.x}
+\vspace{0.5cm}
+\textbf{Python 3.x}
 
 Python serves as the primary programming language for implementing the Audio Deepfake Detection service. It provides extensive support for machine learning, audio processing, data analysis, and model deployment. Its rich ecosystem of scientific computing libraries makes it particularly suitable for research-oriented development and rapid prototyping.
 
-\item \textbf{Go Programming Language}
+\textbf{Go Programming Language}
 
 Go serves for implementing RTC-related services, media handling components, signaling servers, RTP stream processing, and integration middleware. Its lightweight concurrency model, efficient networking capabilities, and low runtime overhead make it well-suited for real-time communication systems that process multiple concurrent audio streams.
 
-\end{enumerate}
 
 \subsubsection{RTC and Communication Infrastructure}
-
-\begin{enumerate}[label=\textbf{\arabic*.}]
-
-\item \textbf{WebRTC and RTP-Based Communication Libraries}
+\vspace{0.5cm}
+\textbf{WebRTC and RTP-Based Communication Libraries}
 
 RTC communication requires software libraries capable of handling audio streaming, RTP packet processing, session establishment, and media transport. These technologies provide the foundation for simulating realistic VoIP and RTC environments and enable integration between communication systems and the proposed detection service.
 
-\item \textbf{Media Server Infrastructure}
+\textbf{Media Server Infrastructure}
 
 Media server components may be utilized to manage audio streams in multi-user RTC environments. Such systems facilitate stream routing, forwarding, session management, and centralized audio access. They provide a practical integration point for deploying the proposed detection framework within real-world communication systems.
 
-\item \textbf{Streaming and API Frameworks (FastAPI or gRPC)}
+\textbf{Streaming and API Frameworks (FastAPI or gRPC)}
 
 The ADD system operates as an external service and therefore requires a communication interface for exchanging audio data and inference results. FastAPI provides a quick HTTP-based integration mechanism suitable for rapid development and prototyping. For low-latency streaming environments, gRPC offers efficient binary communication and bidirectional streaming support, making it more appropriate for production-grade RTC deployments.
 
-\end{enumerate}
 
 \subsubsection{Machine Learning and Deep Learning Frameworks}
-
-\begin{enumerate}[label=\textbf{\arabic*.}]
-
-\item \textbf{PyTorch}
+\vspace{0.5cm}
+\textbf{PyTorch}
 
 PyTorch is the primary deep learning framework used for implementing, training, and evaluating the proposed audio deepfake detection models. It provides automatic differentiation, GPU acceleration, flexible model development, and extensive support for state-of-the-art neural architectures.
 
-\item \textbf{Hugging Face Transformers}
+\textbf{Hugging Face Transformers}
 
 The Hugging Face Transformers library provides access to pretrained self-supervised speech models such as WavLM, HuBERT, and Wav2Vec~2.0. These models serve as feature extraction backbones within the proposed framework and significantly reduce the computational cost associated with training large speech representation models from scratch.
 
-\item \textbf{Scikit-learn}
+\textbf{Scikit-learn}
 
 Scikit-learn is used for data preprocessing, statistical analysis, and performance evaluation. It provides implementations of commonly used evaluation metrics such as accuracy, precision, recall, F1-score, ROC curves, and confusion matrices that are essential for assessing detection performance.
 
-\end{enumerate}
 
 \subsubsection{Audio Processing Libraries}
-
-\begin{enumerate}[label=\textbf{\arabic*.}]
-
-\item \textbf{Librosa}
+\vspace{0.5cm}
+\textbf{Librosa}
 
 Librosa provides functionality for loading audio data, feature extraction, spectrogram generation, resampling, and signal analysis. It is extensively used during dataset preparation and experimental evaluation.
 
-\item \textbf{SoundFile}
+\textbf{SoundFile}
 
 SoundFile supports efficient reading and writing of audio files in multiple formats and serves as a reliable backend for audio data management.
 
-\item \textbf{NumPy and SciPy}
+\textbf{NumPy and SciPy}
 
 NumPy and SciPy provide numerical computing and signal processing capabilities required for audio preprocessing, filtering, statistical analysis, and implementation of custom signal-processing algorithms.
 
-\end{enumerate}
 
 \subsubsection{Data Storage and System Services}
-
-\begin{enumerate}[label=\textbf{\arabic*.}]
-
-\item \textbf{PostgreSQL}
+\vspace{0.5cm}
+\textbf{PostgreSQL}
 
 PostgreSQL may be used to store system metadata, inference logs, experimental results, user activity records, and configuration information. Its reliability and support for structured data management make it suitable for long-term storage requirements.
 
-\item \textbf{Redis}
+\textbf{Redis}
 
 Redis may be employed as an in-memory data store and message broker for real-time communication between system components. It can be used for temporary buffering, caching recent predictions, managing task queues, and facilitating asynchronous processing in low-latency environments.
 
-\end{enumerate}
 
 \subsubsection{Deployment and Containerization Tools}
-
-\begin{enumerate}[label=\textbf{\arabic*.}]
-
-\item \textbf{Docker}
+\vspace{0.5cm}
+\textbf{Docker}
 
 Docker is used to containerize the individual components of the proposed framework, including the ADD service, API server, database services, and RTC middleware. Containerization simplifies deployment, improves portability, and ensures consistent execution across different development and production environments.
 
-\item \textbf{Docker Compose}
+\textbf{Docker Compose}
 
 Docker Compose may be used to orchestrate multiple interconnected services such as the detection engine, API layer, Redis instance, and PostgreSQL database. It simplifies system configuration and supports rapid deployment of the complete architecture.
-
-\end{enumerate}

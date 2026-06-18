@@ -17,7 +17,7 @@ The primary objective of this integration layer is to enable continuous detectio
 
 Two deployment configurations are considered for integrating the detection service into RTC environments.
 
-In the \textbf{client-side deployment}, a lightweight agent or SDK is embedded within the RTC application environment. This agent captures reconstructed audio on the receiver side and forwards audio chunks to the detection service for inference. This approach can provide fast response times and low network overhead; however, it is limited by device compute capacity, deployment complexity, and privacy constraints.
+In the \textbf{client-side deployment}, a lightweight agent or SDK is embedded within the developed RTC application environment. This agent captures reconstructed audio on the receiver side and forwards audio chunks to the detection service for inference. This approach can provide fast response times and low network overhead; however, it is limited by device compute capacity, deployment complexity, and privacy constraints.
 
 In the \textbf{server-side deployment}, which is the preferred configuration in this work, audio is intercepted at the media server or selective forwarding unit (SFU) level after decoding and jitter-buffer processing. The detection service then consumes mirrored audio streams centrally, enabling consistent processing across multiple sessions while avoiding the computational burden on end-user devices. This approach is particularly suitable for enterprise RTC systems and server-managed communication platforms.
 
@@ -31,7 +31,7 @@ Technically, the integration may be realized using RTP stream duplication, media
 
 \subsubsection{API-Based Communication Workflow}
 
-Communication between the RTC system and the detection service is handled through a streaming API layer, typically implemented using gRPC for low-latency environments or HTTP-based streaming for simpler deployments.
+Communication between the developed RTC system and the detection service is handled through a streaming API layer, typically implemented using gRPC for low-latency environments or HTTP-based streaming for simpler deployments.
 
 The workflow follows a chunk-based streaming model in which reconstructed audio segments are transmitted to the detection service in near real time. Each chunk is processed independently, while a small temporal buffer is maintained to preserve continuity across adjacent windows.
 

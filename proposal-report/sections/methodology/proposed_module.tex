@@ -52,14 +52,14 @@ Before feature extraction, each input chunk is normalized and prepared for model
 
 Typical preprocessing operations include:
 \begin{itemize}
-    \item \textbf{Resampling} to a fixed sampling rate (~16KHz) to match the training data.
-    \item \textbf{Amplitude Normalization} standardizes the volumne levels.
-    \item \textbf{Pre-emphasis} Applies a first order high-pass filter to amplify high frequency components.
+    \item \textbf{Resampling} to a fixed sampling rate (16KHz) to match the training data.
+    \item \textbf{Amplitude Normalization} standardizes the volume levels.
+    \item \textbf{Pre-emphasis} applies a first order high-pass filter to amplify high frequency components.
     \item Trimming of silence or non-speech padding to mitigate variations caused by different microphones or sender side gain control,
     \item fixed-length padding for short segments.
 \end{itemize}
 
-Pre-emphasis is critical because RTC codecs often supress high frequencies yet these bands often contain the subtle spectral cus left by synthetic vocoders. 
+Pre-emphasis is critical because RTC codecs often supress high frequencies yet these bands often contain the subtle spectral cues left by synthetic vocoders. 
 
 The result is a standardized audio segment suitable for feature extraction:
 \begin{equation}
@@ -78,11 +78,24 @@ z_t = F(\tilde{x}_t),
 where \(F(\cdot)\) denotes the feature extraction function and \(z_t\) is the resulting feature embedding.
 
 The feature extraction module includes the following components:
+
 \begin{itemize}
-    \item \textbf{Self-supervised speech embeddings:} contextual representations obtained from pretrained models such as WavLM or XLSR,
-    \item \textbf{Frame-level descriptors:} local acoustic embeddings preserving short-time spectral and temporal patterns,
-    \item \textbf{Phoneme-aligned aggregation:} optional grouping of frame-level features into linguistically meaningful units.
+
+    \item \textbf{Hand-Crafted Acoustic Features:}
+    Traditional acoustic descriptors are extracted to capture low-level spectral and temporal characteristics of speech. These features include Mel-Frequency Cepstral Coefficients (MFCCs), spectral centroid, spectral bandwidth, zero-crossing rate, short-time energy, and pitch-related descriptors. Such features provide information about frequency distribution, voice quality, and temporal variations that may reveal artifacts introduced by speech synthesis and vocoding systems.
+
+    \item \textbf{Self-Supervised Speech Embeddings:}
+    High-level contextual speech representations are extracted using pretrained self-supervised learning (SSL) models such as WavLM, or Wav2Vec~2.0. These models generate rich embeddings that capture long-range acoustic and linguistic information while remaining robust to noise, codec compression, and transmission distortions commonly observed in RTC environments.
+
+    \item \textbf{Frame-Level Acoustic Representations:}
+    The continuous speech signal is segmented into short analysis frames, and frame-level embeddings are generated for each segment. These representations preserve local spectral dynamics, temporal transitions, and fine-grained acoustic patterns that may contain artifacts associated with synthetic speech generation.
+
+    \item \textbf{Phoneme-Aligned Feature Aggregation:}
+    To improve linguistic consistency modeling, frame-level features are aggregated according to estimated phoneme boundaries. This process groups acoustically related frames into linguistically meaningful units, enabling the system to capture inconsistencies between phonetic content and acoustic realization that are often observed in deepfake speech.
+
 \end{itemize}
+
+By combining hand-crafted acoustic descriptors with self-supervised contextual representations, the proposed framework captures complementary information from both low-level signal characteristics and high-level speech structure.
 
 Self-supervised embeddings are particularly useful because they capture high-level speech structure and remain relatively robust under codec compression, packet loss, and receiver-side enhancement. Phoneme-aligned aggregation further reduces sensitivity to frame-level noise by summarizing features over more stable linguistic units.
 
@@ -90,36 +103,41 @@ The detector is not relying solely on raw waveform patterns; it operates on repr
 
 \subsubsection{Classification Model Design}
 
-The classification module maps the extracted representation \(z_t\) to a spoofing probability. The model is intentionally compact so that inference remains feasible in real-time RTC conditions.
+The classification module is responsible for determining whether a reconstructed RTC audio segment corresponds to real human speech or AI-generated synthetic speech. To evaluate both detection performance and real-time deployment feasibility, two complementary classification approaches are employed: AASIST and XGBoost.
 
-The classifier is defined as
+For each incoming audio chunk $x_t$, a feature representation $z_t$ is first extracted through the feature extraction pipeline. The resulting representation is then forwarded to a classification model that estimates the probability that the observed speech segment is spoofed.
+
+The classification process is defined as
 \begin{equation}
-\hat{y}_t = \mathcal{C}(z_t),
+s_t = \mathcal{C}(z_t),
 \end{equation}
-where \(\mathcal{C}(\cdot)\) denotes the classification network and \(\hat{y}_t\) is the predicted spoofing score for chunk \(t\).
+where $z_t$ denotes the extracted feature representation, $\mathcal{C}(\cdot)$ represents the classifier, and $s_t \in [0,1]$ is the spoofing probability assigned to audio chunk $t$.
 
-The classification network may be implemented using a lightweight architecture such as:
-\begin{itemize}
-    \item a compact convolutional backend,
-    \item a shallow recurrent module,
-    \item an attention-based aggregator with limited depth.
-\end{itemize}
+\textbf{AASIST-Based Classification}
 
-The model outputs a probability value
+AASIST (Audio Anti-Spoofing using Integrated Spectro-Temporal Graph Attention Networks) serves as the primary deep learning detector in the proposed framework. Unlike conventional architectures that process temporal and spectral information separately, AASIST models speech as a heterogeneous graph and learns relationships between temporal and frequency-domain representations through graph attention mechanisms.
+
+Given an input audio segment $x_t$, AASIST directly extracts discriminative spoofing representations and produces a spoofing score
 \begin{equation}
-s_t \in [0,1],
+s_t^{AASIST} = \mathcal{A}(x_t),
 \end{equation}
-where higher values indicate a higher likelihood of synthetic speech.
+where $\mathcal{A}(\cdot)$ denotes the AASIST network. The model learns artifacts introduced by Text-to-Speech (TTS), Voice Conversion (VC), and other speech synthesis techniques, making it highly effective for audio deepfake detection. Due to its state-of-the-art performance on ASVspoof benchmarks and relatively compact architecture, AASIST is selected as the primary detector for evaluating robustness under RTC-induced degradations such as codec compression, packet loss, jitter buffering, and packet loss concealment.
 
-For binary decision-making, a threshold \(\tau\) is applied:
+\textbf{XGBoost-Based Classification}
+
+XGBoost (Extreme Gradient Boosting) is employed as a computationally efficient baseline model. Unlike AASIST, which operates directly on waveform representations, XGBoost utilizes handcrafted acoustic features extracted from reconstructed RTC audio streams.
+
+For each audio chunk, feature vectors consisting of Mel-Frequency Cepstral Coefficients (MFCCs), spectral statistics, energy-related descriptors, and other acoustic characteristics are extracted and represented as
 \begin{equation}
-\hat{d}_t =
-\begin{cases}
-1, & s_t \geq \tau \\
-0, & s_t < \tau
-\end{cases}
+z_t = [f_1,f_2,\ldots,f_n].
 \end{equation}
-where \(\hat{d}_t = 1\) denotes spoofed speech and \(\hat{d}_t = 0\) denotes bona fide speech.
+The feature vector is then provided to the XGBoost classifier:
+\begin{equation}
+s_t^{XGB} = \mathcal{X}(z_t),
+\end{equation}
+where $\mathcal{X}(\cdot)$ denotes the trained XGBoost model. The classifier generates a spoofing probability based on an ensemble of gradient-boosted decision trees.
+
+XGBoost is included because previous studies have demonstrated that it achieves strong detection performance while maintaining extremely low inference latency. Consequently, it provides an effective benchmark for assessing the trade-off between detection accuracy and real-time computational efficiency.
 
 \subsubsection{Temporal Aggregation and Decision Stabilization}
 
@@ -135,7 +153,7 @@ A smoothed score can be computed as
 \begin{equation}
 \bar{s}_t = A(S_t),
 \end{equation}
-where \(A(\cdot)\) denotes the aggregation function. In implementation, this may be a moving average, weighted average, or majority-based smoothing rule.
+where $A(\cdot)$ denotes the aggregation function. In implementation, this may be a moving average, weighted average, or majority-based smoothing rule.
 
 The final decision is then obtained from the aggregated score:
 \begin{equation}
