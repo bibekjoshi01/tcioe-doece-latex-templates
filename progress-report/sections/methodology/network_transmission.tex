@@ -1,0 +1,102 @@
+\subsection{Network Transmission Layer}
+
+The network transmission layer represents the communication channel between the sender and receiver in an RTC system. Its primary function is to transport encoded audio packets across IP-based networks while satisfying the low-latency requirements of real-time communication. Unlike controlled laboratory conditions, practical communication networks introduce stochastic impairments that can significantly affect speech signal quality.
+
+In the proposed framework, the network layer is treated as a black-box transmission channel that introduces realistic communication distortions. This allows the evaluation of the deepfake detection system under conditions representative of real-world VoIP and RTC deployments.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{images/methodology/network_transmission.png}
+    \vspace{0.25cm}
+    \caption{Network Impairments}
+    \label{fig:newtwork_transmission}
+\end{figure}
+
+
+\subsubsection{Packet Routing in IP Networks}
+
+After packetization and encryption, audio packets are transmitted through packet-switched IP networks using transport protocols such as UDP, commonly combined with the Real-time Transport Protocol (RTP).
+
+Packets traverse multiple intermediate routing nodes before reaching the receiver. Due to dynamic routing decisions and varying network conditions, packet delivery is not guaranteed to preserve timing consistency and may exhibit variable delays.
+
+The transmission process can be represented as
+\begin{equation}
+p_i \rightarrow R_1 \rightarrow R_2 \rightarrow \cdots \rightarrow R_k \rightarrow p_i'
+\label{eq:packet_routing}
+\end{equation}
+where,
+$R_k$ denotes intermediate routing nodes and $p_i'$ represents the received version of packet $p_i$.
+
+Consequently, packet delivery in RTC systems is inherently probabilistic and subject to network-dependent variations.
+
+\subsubsection{Latency, Jitter, and Packet Loss}
+
+Three primary network impairments affect real-time audio communication:
+
+\textbf{Latency:} The end-to-end delay between packet transmission and reception. Latency arises from propagation delay, routing overhead, congestion, and buffering operations.
+
+\textbf{Jitter:} Variation in packet arrival times caused by fluctuations in network conditions. Excessive jitter can disrupt continuous audio playback and requires compensation mechanisms at the receiver.
+
+\textbf{Packet Loss:} Failure of packets to reach the destination due to congestion, buffer overflow, transmission errors, or wireless link instability.
+
+As a result, the received packet sequence may differ from the transmitted sequence:
+\begin{equation}
+{p_1,p_2,\ldots,p_n}
+\rightarrow
+{p_1',p_2',\ldots,p_m'}
+\label{eq:packet_loss_model}
+\end{equation}
+where $m \leq n$, indicating that some transmitted packets may be delayed, reordered, or lost during transmission.
+
+\subsubsection{RTC Channel Characteristics}
+
+In practical RTC environments, network impairments interact with codec behavior and adaptive communication mechanisms. Modern RTC systems dynamically adjust transmission parameters in response to changing network conditions.
+
+Common channel characteristics include:
+
+\begin{itemize}
+\item Time-varying packet loss rates
+\item Delay fluctuations caused by congestion
+\item Burst packet losses in wireless networks
+\item Adaptive bitrate adjustment by the encoder
+\item Variable packet inter-arrival intervals
+\end{itemize}
+
+Consequently, the effective communication channel cannot be modeled as a simple additive noise process. Instead, it behaves as a complex stochastic system that modifies both the temporal and spectral characteristics of transmitted speech.
+
+\subsubsection{Impact on Speech Signal Integrity}
+
+The combined effects of codec compression and network impairments reduce the fidelity of the received speech signal.
+
+Major consequences include:
+
+\begin{itemize}
+\item Loss of fine-grained temporal information
+\item Discontinuities caused by missing packets
+\item Distortion of spectral characteristics
+\item Irregular playback due to high jitter
+\end{itemize}
+
+To maintain acceptable voie quality, real-time communication systems must be designed to tolerate these impairments through techniques such as adaptive encoding, buffering, packet sequencing, and error concealment.
+
+The overall transformation from transmitted speech to received speech can be represented as
+\begin{equation}
+x_r(t) = T_{net}\left(C(x(t))\right)
+\label{eq:signal_distortion}
+\end{equation}
+where
+\begin{itemize}
+\item $C(\cdot)$ denotes the codec compression process,
+\item $T_{net}(\cdot)$ represents the network transmission effects,
+\item $x_r(t)$ is the received speech signal.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \vspace{1cm}
+    \includegraphics[width=1\textwidth]{images/methodology/network_effect.png}
+    \caption{Codec and Network Effect on Speech Signal}
+    \label{fig:network_effect}
+\end{figure}
+
+These distortions directly influence the acoustic features for the downstream deepfake detection module and therefore must be considered when evaluating the RTC system.

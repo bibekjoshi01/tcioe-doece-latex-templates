@@ -1,0 +1,99 @@
+\subsection{Evaluation Metrics and Performance Assessment}
+
+Since the system is designed for integration within RTC/VoIP environments, evaluation considers both detection accuracy and computational efficiency and latency constraints.
+
+The performance evaluation is therefore divided into two categories:
+
+\subsubsection{Detection Performance Metrics}
+
+The primary objective of the proposed framework is to accurately distinguish real speech from synthetic speech under realistic RTC transmission conditions. To assess classification performance, the following metrics are employed.
+
+\textbf{Equal Error Rate (EER)} is the primary evaluation metric widely adopted in audio spoofing and deepfake detection research, particularly in ASVspoof benchmarks. EER represents the operating point at which the False Acceptance Rate (FAR) equals the False Rejection Rate (FRR).
+
+A lower EER indicates better discrimination capability between real and spoofed speech samples.
+\begin{equation}
+EER = FAR = FRR
+\end{equation}
+Since EER is threshold-independent and directly reflects spoof detection performance, it serves as the principal metric for model comparison.
+
+\textbf{Receiver Operating Characteristic Area Under Curve (ROC-AUC)} measures the ability of the classifier to distinguish between real and synthetic speech across all possible decision thresholds.
+
+The ROC curve plots:
+\begin{itemize}
+\item True Positive Rate (TPR)
+\item False Positive Rate (FPR)
+\end{itemize}
+The Area Under Curve (AUC) is then computed as:
+\begin{equation}
+AUC = \int_0^1 TPR(FPR) \times d(FPR)
+\end{equation}
+Higher ROC-AUC values indicate stronger classification capability and better threshold robustness.
+
+\textbf{Precision} measures the proportion of detected deepfake samples that are actually synthetic.
+\begin{equation}
+Precision =
+\frac{TP}{TP + FP}
+\end{equation}
+where:
+\begin{itemize}
+\item $TP$ = True Positives
+\item $FP$ = False Positives
+\end{itemize}
+High precision indicates a low false alarm rate.
+
+\textbf{Recall} measures the proportion of actual synthetic speech samples correctly detected by the system.
+\begin{equation}
+Recall =
+\frac{TP}{TP + FN}
+\end{equation}
+where:
+\begin{itemize}
+\item $FN$ = False Negatives
+\end{itemize}
+High recall indicates strong detection sensitivity.
+
+\textbf{F1-Score} provides a balanced measure of precision and recall and is particularly useful when class distributions are imbalanced.
+\begin{equation}
+F1 =
+2 \cdot
+\frac{Precision \times Recall}
+{Precision + Recall}
+\end{equation}
+Higher F1-scores indicate improved overall classification effectiveness.
+
+\textbf{Confusion Matrix Analysis} is used to analyze prediction behavior by reporting:
+\begin{itemize}
+\item True Positives (TP)
+\item True Negatives (TN)
+\item False Positives (FP)
+\item False Negatives (FN)
+\end{itemize}
+This analysis provides insight into the types of classification errors made by the detection system.
+
+\subsubsection{Real-Time System Performance Metrics}
+
+Since the proposed framework targets live RTC environments, computational efficiency and responsiveness are critical deployment requirements.
+
+\textbf{Inference Latency} measures the time required for processing an incoming audio segment and producing a prediction.
+\begin{equation}
+Latency =
+t_{output} - t_{input}
+\end{equation}
+Low inference latency is essential for maintaining real-time operation and minimizing delay in user-facing applications.
+
+\textbf{Throughput} measures the number of audio segments or audio streams processed per unit time.
+\begin{equation}
+Throughput =
+\frac{\textit{Number of Processed Chunks}}
+{\textit{Unit Time}}
+\end{equation}
+
+This metric evaluates the scalability of the proposed detection service under increasing workloads.
+
+\textbf{Memory Utilization} measures the amount of system memory consumed during inference.
+
+This metric is important for deployment on resource-constrained environments such as edge servers, embedded systems, or cloud instances with limited resources.
+
+\textbf{CPU and GPU Utilization} utilization are monitored during model inference to assess computational efficiency and hardware requirements.
+
+These measurements help determine the practical feasibility of deploying the proposed framework in real-time communication infrastructures.

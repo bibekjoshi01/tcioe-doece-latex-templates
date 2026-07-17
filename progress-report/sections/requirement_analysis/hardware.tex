@@ -1,0 +1,35 @@
+\subsection{Hardware Requirements}
+
+The Audio Deepfake Detection (ADD) system involves real-time audio processing, deep learning-based inference, and simulation of RTC/VoIP communication conditions. Therefore, appropriate hardware resources are required to support data acquisition, model training, real-time inference, and system evaluation. The hardware requirements are categorized based on their functional roles within the system.
+
+\textbf{Processor (Multi-core CPU)}
+
+A multi-core CPU is required to handle concurrent system operations such as audio preprocessing, stream ingestion, API handling, and RTC simulation tasks. Since the system processes continuous audio streams in real time, parallel execution capability is essential. A modern processor with at least 4 to 8 cores is recommended to ensure smooth execution of both inference and communication-related tasks.
+
+\textbf{Main Memory}
+
+Sufficient memory is required for loading audio data, managing streaming buffers, and executing machine learning models. During real-time processing, multiple audio chunks may be stored temporarily for windowing and aggregation, which increases memory demand. A minimum of 8 GB RAM is required for basic execution; however, 16 GB or higher is recommended for stable training and multitasking performance.
+
+\textbf{Graphics Processing Unit (GPU with CUDA Support)}
+
+A dedicated GPU is highly recommended for training and evaluating deep learning models used in audio deepfake detection. Models such as WavLM, Wav2Vec 2.0, and transformer-based classifiers involve computationally intensive matrix operations that benefit significantly from GPU acceleration. CUDA-enabled NVIDIA GPUs are preferred, as PyTorch and related frameworks provide optimized support for GPU-based computation, significantly reducing training time.
+
+\textbf{Storage Device}
+
+A solid-state drive (SSD) is recommended for efficient storage and retrieval of large audio datasets, pretrained models, and experimental logs. Audio datasets and deep learning checkpoints can occupy significant disk space, and SSDs provide faster read/write speeds compared to traditional hard drives, improving overall system performance during training and evaluation.
+
+\textbf{Audio Input Device (Microphone)}
+
+A microphone is required for capturing real-time speech samples during testing and system evaluation. It is used to simulate real-world RTC conditions where speech is acquired through user input devices. The quality of the microphone may influence signal clarity, but the system is designed to be robust against moderate recording variations.
+
+\textbf{Audio Output Device (Headphones or Speakers)}
+
+Audio playback devices are required for monitoring reconstructed speech during RTC simulation and verification of system behavior. Headphones are preferred for reducing external noise interference during evaluation and testing phases.
+
+\textbf{Network Connectivity}
+
+A stable internet connection is required to simulate real-world RTC environments involving packet transmission, latency, jitter, and packet loss conditions. Since the system evaluates performance under VoIP-like conditions, network stability plays a key role in ensuring realistic testing scenarios.
+
+\textbf{High-Performance Computing (HPC) / Cloud GPU Support}
+
+For large-scale training or experimentation with deep self-supervised models, cloud-based GPU resources (such as NVIDIA T4, V100, or A100 instances) may be utilized. This is particularly useful when training is computationally expensive or when local hardware resources are insufficient.
