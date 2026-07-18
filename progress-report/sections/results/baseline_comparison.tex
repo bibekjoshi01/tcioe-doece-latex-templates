@@ -1,0 +1,25 @@
+\subsection{Baseline Model Comparison}
+
+Table~\ref{tab:baseline_comparison} reports the overall comparison across all six baseline models: the two deep learning detectors (Section~5.3) and the four classical classifiers (Section~5.2), each using the feature representation, duration configuration, and hyperparameters selected in the preceding ablations. Development-set values are used for model selection and threshold calibration; evaluation-set values are reported exactly once, consistent with the discipline described in Section~5.4.
+
+\renewcommand{\arraystretch}{1.4}
+\setlength{\tabcolsep}{6pt}
+\begin{table}[H]
+\centering
+\caption{Baseline Model Comparison (Development and Evaluation Sets)}
+\label{tab:baseline_comparison}
+\begin{tabularx}{\textwidth}{l c c c c c c}
+\hline
+\textbf{Model} & \textbf{Dev EER (\%)} & \textbf{Eval EER (\%)} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{ROC-AUC} \\
+\hline
+RawNet2 & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+AASIST & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+XGBoost & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+Random Forest & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+SVM & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+GBM & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+\hline
+\end{tabularx}
+\end{table}
+
+Precision, recall, F1-score, and ROC-AUC are computed at the decision threshold calibrated on the development set, per Section~5.4. These reference operating points, obtained entirely on clean ASVspoof5 audio, establish the baseline against which RTC-induced performance degradation will be measured once the augmentation pipeline in Section~4.8.1 is integrated for the final report (Section~7).

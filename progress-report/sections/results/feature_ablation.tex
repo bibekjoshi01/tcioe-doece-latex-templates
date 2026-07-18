@@ -1,0 +1,42 @@
+\subsection{Feature Representation Ablation}
+
+As described in Section~5.2.1, a systematic ablation was conducted on the development set to select the feature representation used by the four classical classifiers, across two axes: feature source and WavLM configuration.
+
+Table~\ref{tab:feature_source_ablation} compares handcrafted acoustic features, WavLM embeddings, and their concatenation, as inputs to each classical model.
+
+\renewcommand{\arraystretch}{1.4}
+\setlength{\tabcolsep}{8pt}
+\begin{table}[H]
+\centering
+\caption{Feature-Source Ablation (Development Set EER, \%)}
+\label{tab:feature_source_ablation}
+\begin{tabular}{l c c c c}
+\hline
+\textbf{Feature Source} & \textbf{XGBoost} & \textbf{Random Forest} & \textbf{SVM} & \textbf{GBM} \\
+\hline
+Handcrafted-only & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+WavLM-only & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+Concatenated (handcrafted + WavLM) & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+\hline
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:wavlm_config_ablation} compares the four candidate WavLM configurations (base vs. large checkpoint; last-layer vs. all-layer-averaged pooling) used to arrive at the final WavLM-only representation.
+
+\begin{table}[H]
+\centering
+\caption{WavLM Configuration Ablation (Development Set EER, \%)}
+\label{tab:wavlm_config_ablation}
+\begin{tabular}{l c c c c}
+\hline
+\textbf{Configuration} & \textbf{XGBoost} & \textbf{Random Forest} & \textbf{SVM} & \textbf{GBM} \\
+\hline
+Base, last-layer & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+Base, all-layer averaged & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+Large, last-layer & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+Large, all-layer averaged (selected) & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+\hline
+\end{tabular}
+\end{table}
+
+Consistent with the selection reported in Section~5.2.1, the lowest development-set EER across all four models is expected from the WavLM-only, large-checkpoint, all-layer-averaged configuration, motivating its adoption as the final feature representation for the classical baselines.

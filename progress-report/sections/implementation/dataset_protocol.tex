@@ -1,0 +1,25 @@
+\subsection{Dataset and Protocol}
+
+Training and comparison of all baselines used ASVspoof 5 \cite{wang24_asvspoof}, obtained from its official Hugging Face release (\texttt{jungjee/asvspoof5}). The dataset background, protocol design, and licensing are described in Section~4.8.1; this subsection reports the partition sizes and checks used in our implementation.
+
+Audio was used as distributed, 16~kHz mono FLAC, without additional resampling. Table~\ref{tab:asvspoof5_stats} reports the number of utterances used per partition. Due to the computational cost of wavLM feature extraction at full scale within the timeframe of this progress report, evaluation was conducted on a stratified subset of the evaluation partition rather than its full size; the complete evaluation partition is planned for the final report.
+
+\renewcommand{\arraystretch}{1.4}
+\setlength{\tabcolsep}{10pt}
+\begin{table}[H]
+\centering
+\caption{ASVspoof 5 Partition Sizes Used}
+\label{tab:asvspoof5_stats}
+\begin{tabular}{l c}
+\hline
+\textbf{Partition} & \textbf{Utterances} \\
+\hline
+Training & 182{,}357 \\
+Development & 140{,}950 \\
+Evaluation (full partition) & 681{,}872 \\
+Evaluation (subset evaluated) & 100{,}000 \\
+\hline
+\end{tabular}
+\end{table}
+
+The three partitions were confirmed programmatically to be file-disjoint, so that no utterance appears in more than one partition. Each utterance is labeled bonafide or spoof through the CM key field of the official protocol files; the spoof class outnumbers bonafide in every partition, which was handled at the model level (class weighting for the classical ML baselines, \texttt{scale\_pos\_weight} for XGBoost) rather than by resampling the released splits. The evaluation subset was sampled to preserve this same class ratio.

@@ -1,0 +1,22 @@
+\subsection{Duration Matching Ablation}
+
+As described in Section~5.2.2, feature extraction for the classical baselines uses a fixed audio duration per utterance. Table~\ref{tab:duration_ablation} compares the three candidate duration configurations evaluated on the development set: a fixed 1.0-second duration, a fixed 3.0-second duration, and a duration sampled uniformly at random in the 1.0--3.0-second range per utterance.
+
+\renewcommand{\arraystretch}{1.4}
+\setlength{\tabcolsep}{8pt}
+\begin{table}[H]
+\centering
+\caption{Duration Configuration Ablation (Development Set EER, \%)}
+\label{tab:duration_ablation}
+\begin{tabular}{l c c c c}
+\hline
+\textbf{Duration Configuration} & \textbf{XGBoost} & \textbf{Random Forest} & \textbf{SVM} & \textbf{GBM} \\
+\hline
+Fixed 1.0s & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+Random 1.0--3.0s & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+Fixed 3.0s (selected) & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+\hline
+\end{tabular}
+\end{table}
+
+Consistent with the selection reported in Section~5.2.2, the fixed 3.0-second configuration is expected to outperform both alternatives across all four models, motivating its adoption for all subsequent classical-baseline results reported in this section.

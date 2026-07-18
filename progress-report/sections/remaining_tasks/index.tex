@@ -1,0 +1,29 @@
+\newpage
+\section{REMAINING TASKS}
+
+Table~\ref{tab:impl_status} summarizes work completed for this progress report against work planned for the final report, consistent with the two-phase scope described throughout the Implementation chapter (Section~5): baseline and SOTA model reproduction on clean ASVspoof5 now, and RTC-aware pipeline integration with the corresponding robustness evaluation for the final phase.
+
+\renewcommand{\arraystretch}{1.5}
+\setlength{\tabcolsep}{8pt}
+\begin{table}[H]
+\centering
+\caption{Implementation and Evaluation Status}
+\label{tab:impl_status}
+\begin{tabular}{p{5.5cm} p{4cm} p{3.5cm}}
+\hline
+\textbf{Component} & \textbf{Status} & \textbf{Target} \\
+\hline
+Dataset preparation (ASVspoof5, Section~5.1) & Completed & Progress report \\
+Classical ML baselines: XGBoost, Random Forest, SVM, Gradient Boosting (Section~5.2) & Completed & Progress report \\
+Deep learning baselines: RawNet2, AASIST (clean-audio training, Section~5.3) & Completed & Progress report \\
+Baseline results and ablation analysis (Section~6) & In progress & Progress report \\
+RTC-aware distortion pipeline: codec round-trip, packet-loss simulation, post-processing (Section~4.8.1) & Designed; implementation pending & Final report \\
+RTC transmission pipeline integration: sender, network, receiver subsystems (Sections~4.1--4.4) & Designed; implementation pending & Final report \\
+Detection service integration with RTC pipeline (Sections~4.5--4.6) & Designed; implementation pending & Final report \\
+RTC distortion robustness evaluation across codecs and packet-loss rates (Section~4.8) & Pending pipeline integration & Final report \\
+Real-time performance profiling: latency, throughput, resource utilization (Section~4.7) & Pending pipeline integration & Final report \\
+\hline
+\end{tabular}
+\end{table}
+
+The clean-audio baseline comparison established in this phase provides the reference operating points for each of the six models (Section~6.4). These reference points will be used to measure the extent of RTC-induced performance degradation once the RTC-aware augmentation pipeline described in Section~4.8.1 is integrated, directly addressing the RTC distortion robustness research question defined in Section~4.8.

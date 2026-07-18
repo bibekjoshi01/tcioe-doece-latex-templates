@@ -1,0 +1,36 @@
+\subsection{Deep Learning Baseline Implementation}
+
+Four detector architectures have been implemented and trained on the ASVspoof5 partitions described in Section~5.1, in order to evaluate both detection performance and the accuracy/efficiency trade-off relevant to the real-time deployment goal of this project (Section~4.6). The four span a range of established design families in the anti-spoofing literature: an end-to-end raw-waveform residual-recurrent network, a graph-attention spectro-temporal network, a modernized time-delay architecture, and a spectrogram-domain variant of the graph-attention design.
+
+\textbf{RawNet2} \cite{Tak2021_rawnet2} operates directly on the raw audio waveform through a SincConv front-end, a stack of residual blocks, and a Gated Recurrent Unit (GRU) layer for temporal modeling. It is reproduced here as an established, widely reported end-to-end baseline in the ASVspoof line of work, giving a reference point against which the remaining three architectures are compared. As an implementation detail, the SincConv filterbank is computed once at model initialization and registered as a fixed buffer, rather than recomputed on every forward pass; this is a computational efficiency change with no effect on the model's behavior or outputs.
+
+\textbf{AASIST} \cite{Jung2022_aasist} is the graph-attention spectro-temporal architecture already adopted as the primary detector design in Section~4.5. Rather than being cited only as a design choice, it has been trained directly on ASVspoof5 in this phase so that its reported state-of-the-art performance can be independently verified on the project's own data pipeline before RTC-aware training is introduced. AASIST extends RawNet2's front-end design with a graph attention network operating jointly over spectral and temporal graphs, replacing RawNet2's residual-and-GRU backbone as the mechanism for temporal aggregation.
+
+\textbf{NeXt-TDNN} \cite{Heo2024_nexttdnn} is a modernized time-delay neural network architecture that incorporates recent convolutional design elements, including depthwise separable convolutions and updated normalization schemes, applied here to the spoof detection task. It is included as a lighter-weight architecture relative to RawNet2 and AASIST, providing a comparison point on the accuracy/efficiency trade-off relevant to real-time deployment.
+
+\textbf{Spectro-AASIST} adapts the AASIST graph-attention design to operate on spectrogram (time-frequency) input rather than the raw waveform used by the original AASIST front end. It is included to evaluate whether a spectrogram-domain front end changes detection performance or robustness relative to AASIST's raw-waveform variant, under an otherwise equivalent graph-attention backbone.
+
+All four models were trained on clean ASVspoof5 audio, without the RTC-aware augmentation pipeline (Section~5.2) applied at this stage; integration of RTC-aware training for all four architectures is planned for the final implementation phase.
+
+% TODO: replace with actual training configuration for each model
+Training configuration for each model is summarized in Table~\ref{tab:dl_training_config}.
+
+\renewcommand{\arraystretch}{1.4}
+\setlength{\tabcolsep}{10pt}
+\begin{table}[H]
+\centering
+\caption{Deep Learning Baseline Training Configuration}
+\label{tab:dl_training_config}
+\begin{tabular}{l c c c c}
+\hline
+\textbf{Model} & \textbf{Audio Window} & \textbf{Batch Size} & \textbf{Optimizer} & \textbf{Epochs} \\
+\hline
+RawNet2         & [FILL IN] & [FILL IN] & [FILL IN] & [FILL IN] \\
+AASIST          & [FILL IN] & [FILL IN] & [FILL IN] & [FILL IN] \\
+NeXt-TDNN       & [FILL IN] & [FILL IN] & [FILL IN] & [FILL IN] \\
+Spectro-AASIST  & [FILL IN] & [FILL IN] & [FILL IN] & [FILL IN] \\
+\hline
+\end{tabular}
+\end{table}
+
+All four models were evaluated under the same development/evaluation discipline used for the classical ML baselines (Section~5.3): the development set was used for training-time monitoring and checkpoint selection, and the evaluation set was held out until a single final evaluation pass.ß

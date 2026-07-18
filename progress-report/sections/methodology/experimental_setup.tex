@@ -6,27 +6,19 @@ The experiments will focus on three primary aspects: robustness against RTC-indu
 
 \subsubsection{Dataset Configuration}
 
-The experimental evaluation will primarily utilize benchmark datasets from the ASVspoof challenge series and other publicly available audio deepfake corpora.
-
-\textbf{RTCFake (2025):} The first large-scale dataset specifically tailored for RTC, totaling approximately 600 hours It features precise ``offline-online'' pairing, created by transmitting speech through seven mainstream platforms: Zoom, WeChat, QQ, DingTalk, Lark, VooV, and Telegram. It includes both seen and unseen platforms and complex noise conditions for evaluating generalization
-
-\textbf{ADD-C (2024):} A benchmarking test dataset designed to assess robustness under diverse communication conditions. It simulates six widely used VoIP/VoLTE codecs (AMR-WB, EVS, IVAS, OPUS, Speex, and SILK) across five different Packet Loss Rates (PLRs) ranging from 0\% to 20\%.
-
-\textbf{Teams Meeting Dataset (2024):} A dataset curated specifically for real-time testing in communication platforms using actual Microsoft Teams group meeting sessions. It includes authentic voice samples and synthetic events introduced via voice cloning and conversion, with trials lasting 10 seconds each.
+The experimental evaluation relies on two dataset components: the ASVspoof 5 benchmark and a custom RTC-aware augmentation pipeline applied on top of it.
 
 \textbf{ASVspoof 5 (2024/2026):} Focuses on ``Generic Telephony or VoIP'' scenarios. It incorporates crowdsourced data recorded in diverse acoustic conditions and processes it with both conventional and contemporary neural codecs (e.g., EnCodec) to simulate modern VoIP quality.
 
-\textbf{ASVspoof 2021 (DF Task):} An earlier but foundational dataset that introduced codec and compression artifacts to evaluate generalizability toward unknown channel variations in real telephone systems.
+\textbf{RTC-Aware Augmentation Pipeline:} Applied on top of ASVspoof 5 audio, this custom pipeline introduces codec round-trip transformation, bursty packet-loss simulation, and receiver-side post-processing to expose training and evaluation data to RTC-induced transmission conditions beyond those captured in ASVspoof 5 alone.
 
-A subset of our evaluation data will consist of paired ``offline-online'' samples. This involves playing clean synthetic and real audio through a virtual device and recording the output after it has been processed by the internal ``black-box'' pipelines (noise suppression, echo cancellation, and encryption) of platforms like Zoom and Microsoft Teams. 
-
-The dataset will be partitioned into three speaker-disjoint subsets:
+The dataset is partitioned into three speaker-disjoint subsets:
 
 \textbf{Training Set:} consist balanced real/fake utterances augmented with simulated codecs and packet loss
 
 \textbf{Development Set:} used for hyperparameter tuning and setting detection thresholds
 
-\textbf{Evaluation Set:} will include unseen spoofing algorithms and unseen communication platforms to rigorously test the system’s cross-domain generalization and real-time performance
+\textbf{Evaluation Set:} will include unseen spoofing algorithms to rigorously test the system’s cross-domain generalization and real-time performance
 
 \subsubsection{Synthetic Speech Generation Methods}
 

@@ -1,0 +1,21 @@
+\subsection{XGBoost Regularization Sweep}
+
+As noted in Section~5.2.3, an initial deeper, less-regularized XGBoost configuration exhibited severe overfitting on the training set. Table~\ref{tab:xgb_regularization} contrasts this initial configuration with the shallow-tree, L1/L2-regularized configuration selected via the manual regularization sweep.
+
+\renewcommand{\arraystretch}{1.4}
+\setlength{\tabcolsep}{8pt}
+\begin{table}[H]
+\centering
+\caption{XGBoost Regularization Sweep (EER, \%)}
+\label{tab:xgb_regularization}
+\begin{tabular}{l c c c}
+\hline
+\textbf{Configuration} & \textbf{Training EER} & \textbf{Development EER} & \textbf{Train--Dev Gap} \\
+\hline
+Initial (deep, unregularized) & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+Final (shallow, L1/L2-regularized, selected) & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+\hline
+\end{tabular}
+\end{table}
+
+The initial configuration is expected to show near-zero training EER alongside a substantially higher development EER, indicating memorization of the training set rather than generalizable spoof-detection behavior; the regularized configuration is expected to narrow this gap, at the cost of a small increase in training EER, and is used for the XGBoost results reported in Section~6.4.

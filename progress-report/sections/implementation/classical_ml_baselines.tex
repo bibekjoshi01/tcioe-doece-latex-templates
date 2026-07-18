@@ -1,0 +1,40 @@
+\subsection{Classical Machine Learning Baseline Implementation}
+
+Classical machine learning models were implemented as a comparison point to evaluate whether simpler, non-deep-learning approaches offering lower training cost and greater interpretability could achieve competitive spoof detection performance, and to enable ablation studies that isolate the contribution of individual feature representations.
+
+\subsubsection{Feature Representations}
+
+Two feature representations were implemented and compared as candidate inputs to the classical classifiers.
+
+\textbf{Handcrafted acoustic features:} per-utterance statistics (mean and standard deviation over time) computed from 13-coefficient Mel-Frequency Cepstral Coefficients (MFCCs) and their delta coefficients, spectral centroid, spectral bandwidth, spectral rolloff, zero-crossing rate, root-mean-square (RMS) energy, and chroma features, concatenated into a single fixed-length vector per utterance.
+
+\textbf{WavLM embeddings:} utterance-level embeddings extracted from a pretrained WavLM model \cite{Chen2022_wavlm} (Microsoft \texttt{wavlm-large}, used without fine-tuning), obtained by mean-pooling the model's hidden states across all transformer layers rather than using only the final layer, and then mean-pooling across the time dimension, producing a single fixed-length embedding per utterance.
+
+We conducted a comparative evaluation study on the development set to evaluate two factors: (1) the feature type (handcrafted features, WavLM embeddings, or their combination) and (2) the WavLM configuration (base vs. large model, and last-layer vs. all-layer averaged embeddings).
+
+The results showed that WavLM-large with all-layer averaged embeddings performed best across all four models. Handcrafted features did not improve performance for three of the four models, and combining them with WavLM provided no consistent benefit. Therefore, WavLM-large with all-layer averaging was selected as the final feature representation.
+
+\subsubsection{Duration Matching}
+
+Feature extraction uses a fixed 3.0-second audio duration per utterance, obtained via random cropping for longer utterances and cyclic repetition (padding) for shorter ones. This fixed duration was selected after systematically comparing a fixed 1.0-second duration, a fixed 3.0-second duration, and a randomly sampled duration in the 1.0--3.0-second range per utterance; the fixed 3.0-second configuration outperformed both alternatives across all four models on the development set.
+
+\subsubsection{Models Trained}
+
+Four classical classifiers were trained and compared:
+\begin{itemize}
+    \item \textbf{XGBoost} \cite{Chen2016_xgboost} (gradient-boosted decision trees), using a regularized configuration with shallow trees and combined L1/L2 regularization. This configuration was selected after a manual regularization sweep because an earlier, deeper model showed severe overfitting, with near-zero training error but a large gap between training and development performance.
+    
+    \item \textbf{Random Forest} \cite{Breiman2001_rf} (bagged decision trees), using class-balanced sample weighting to handle the class imbalance between bonafide and spoofed utterances.
+    
+    \item \textbf{Support Vector Machine (SVM)} \cite{Cortes1995_svm} with a radial basis function (RBF) kernel and probability calibration enabled for Equal Error Rate (EER) computation.
+    
+    \item \textbf{Gradient Boosting (GBM)}, implemented using scikit-learn's histogram-based \texttt{HistGradientBoostingClassifier} \cite{Pedregosa2011_sklearn, Ke2017_lightgbm} instead of the classical \texttt{GradientBoostingClassifier} \cite{Friedman2001_gb}. This variant was chosen because it trains much faster on high-dimensional embedding features and is referred to as the ``GBM'' baseline throughout the results.
+\end{itemize}
+
+\subsubsection{Standardization and Class-Imbalance Handling}
+
+All four models apply feature standardization (zero mean, unit variance), with standardization statistics fit exclusively on the training set and applied via transform to the development and evaluation sets. Class imbalance between bonafide and spoofed utterances is addressed at the model level rather than by resampling: through the \texttt{scale\_pos\_weight} parameter for XGBoost, and through \texttt{class\_weight="balanced"} for Random Forest and SVM.
+
+\subsubsection{Evaluation Protocol}
+
+All four models were compared and tuned exclusively on the development set, using Equal Error Rate (EER) as the primary metric, with precision, recall, F1-score, and ROC-AUC reported as supporting metrics. The evaluation set was held out throughout feature selection, duration-matching, and hyperparameter tuning, and was evaluated only once, after every feature and hyperparameter decision had already been finalized on the development set, to avoid evaluation-set leakage into model selection.

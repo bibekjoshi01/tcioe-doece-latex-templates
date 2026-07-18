@@ -1,0 +1,9 @@
+\subsection{Discussion}
+
+Once the tables in this section are populated with measured values, the analysis will address three questions raised by the ablation design in Section~5.2 and the comparative evaluation in Section~6.4.
+
+First, the feature-representation and duration-matching ablations (Sections~6.1--6.2) are expected to confirm whether self-supervised WavLM embeddings alone provide a more discriminative and more robust representation than handcrafted acoustic descriptors for this task, and whether a fixed, moderately long analysis window (3.0s) is sufficient to capture the spectro-temporal artifacts associated with synthetic speech without the instability introduced by very short or variable-length windows.
+
+Second, the overall baseline comparison (Section~6.4) will be read against the accuracy/efficiency trade-off motivating the inclusion of classical models in the first place (Section~5.2): whether AASIST's spectro-temporal graph attention mechanism yields a measurable EER advantage over the classical baselines commensurate with its additional training and inference cost (Section~4.6), and whether any classical model, in particular the regularized XGBoost or GBM configuration, achieves a competitive EER at meaningfully lower computational cost.
+
+Third, the results in this section serve strictly as clean-audio reference points. The discussion will explicitly avoid drawing conclusions about RTC deployment readiness from these figures alone, since the RTC-induced degradation this project ultimately investigates (Section~1.4, Objective 2) is only measurable once the augmentation pipeline in Section~4.8.1 is integrated and the corresponding robustness evaluation, tracked in Section~7, is completed for the final report.
