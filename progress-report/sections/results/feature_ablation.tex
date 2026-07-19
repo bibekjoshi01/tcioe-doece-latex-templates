@@ -16,14 +16,14 @@ Table~\ref{tab:feature_source_ablation} compares handcrafted acoustic features, 
 \hline
 Handcrafted-only & 44.80 & 32.25 & 33.96 & 30.82 \\
 WavLM-only & 20.88 & 26.41 & 19.08 & 21.12 \\
-Concatenated (handcrafted + WavLM) & 26.54 & 23.28 & 22.58 & --- \\
+Concatenated (handcrafted + WavLM) & 26.54 & 23.28 & 22.58 & 23.56 \\
 \hline
 \end{tabularx}
 \end{table}
 
-Handcrafted acoustic features were the weakest representation across every model, by a wide margin. Concatenation with WavLM embeddings improved performance for Random Forest alone; for XGBoost and SVM, concatenation performed worse than WavLM embeddings used in isolation, suggesting that the lower-dimensional handcrafted block introduced noise that these models did not discount as effectively as Random Forest's per-tree feature subsampling. GBM concatenation was not evaluated, as the WavLM-only result already established the direction of the finding for the remaining three models.
+Handcrafted acoustic features were the weakest representation across every model, by a wide margin. Concatenation with WavLM embeddings improved performance for Random Forest alone; for XGBoost, GBM and SVM, concatenation performed worse than WavLM embeddings used in isolation, suggesting that the lower-dimensional handcrafted block introduced noise that these models did not discount as effectively as Random Forest's per-tree feature subsampling.
 
-Table~\ref{tab:wavlm_config_ablation} compares three of the four candidate WavLM configurations (base vs.\ large checkpoint; last-layer vs.\ all-layer-averaged pooling), using the WavLM-only feature source established above. The base-checkpoint, all-layer-averaged configuration was not evaluated, as the large-checkpoint results below were already sufficient to motivate the final selection.
+Table~\ref{tab:wavlm_config_ablation} compares three of the four candidate WavLM configurations (base vs.\ large checkpoint; last-layer vs.\ all-layer-averaged pooling), using the WavLM-only feature source established above. The base-checkpoint, all-layer-averaged configuration was not evaluated, as the large-checkpoint results below were already sufficient to choose the final selection.
 
 \begin{table}[H]
 \centering

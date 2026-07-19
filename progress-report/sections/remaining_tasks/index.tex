@@ -17,8 +17,8 @@ Table~\ref{tab:impl_status} lists the work remaining after this progress report,
 \endhead
 \hline
 \endfoot
-Baseline results and ablation analysis (Section~6) &
-Complete RawNet2 and AASIST training and evaluation on the full ASVspoof5 training partition, then populate the \textit{TBD} entries in the comparison table (Section~6.4) with measured metrics. \\
+Investigate the RawNet2/AASIST evaluation-set EER gap and capture their missing metrics (Section~6.4) &
+RawNet2's development-set EER (5.87\%) is now captured and is competitive with the classical baselines, yet its evaluation-set EER (36.04\%) remains far higher, pointing toward a generalization gap to the unseen attack types in the evaluation partition rather than under-training; its precision, recall, F1, and ROC-AUC are still missing. AASIST's evaluation-set EER (29.12\%) is known, but its development-set EER and full supporting metrics have not yet been captured at all. Confirm the generalization-gap hypothesis for RawNet2, diagnose AASIST from scratch, and capture all missing metrics for both. \\
 RTC-aware distortion pipeline: codec round-trip, packet-loss simulation, post-processing (Section~4.8.1) &
 Implement the codec round-trip (Opus, G.711, AAC via \texttt{ffmpeg}), the Gilbert--Elliott bursty packet-loss simulator, and the AGC/high-pass post-processing stage, gated by a clean-sample probability during training. \\
 RTC transmission pipeline integration: sender, network, receiver subsystems (Sections~4.1--4.4) &

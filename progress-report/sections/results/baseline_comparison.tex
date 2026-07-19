@@ -1,6 +1,6 @@
 \subsection{Baseline Model Comparison}
 
-Table~\ref{tab:baseline_comparison} reports the overall comparison across baseline models. Deep learning results (RawNet2, AASIST) are pending completion of training and are reported here as \textit{TBD}, pending internal experiments; NeXt-TDNN and Spectro-AASIST reflect completed training runs on ASVspoof5. Classical ML entries reflect the selected configuration from Sections~6.1--6.3 (WavLM-large, all-layer-averaged embeddings, fixed 3.0-second duration, regularized XGBoost), evaluated on the same 20,000-utterance development subset used throughout the ablations in this section. Training and evaluation of all classical baselines on the full ASVspoof5 training partition (182,357 utterances) and the corresponding evaluation-set measurement are in progress and will be reported in the final report; evaluation-set columns are therefore marked \textit{TBD} at this stage, consistent with this project's discipline of evaluating the held-out set only once, after all model selection is finalized on the development set.
+Table~\ref{tab:baseline_comparison} reports the final comparison across all eight baseline models. Each model is trained on the full ASVspoof5 training partition (182,357 utterances) and evaluated exactly once on the held-out evaluation partition, consistent with this project's single-pass evaluation discipline; precision, recall, F1, and ROC-AUC are computed at the decision threshold calibrated on the development set. Classical ML entries use the selected WavLM-large, all-layer-averaged, fixed-3.0-second-duration configuration established in Sections~6.1--6.3. Development-set EER is now available for RawNet2 (5.87\%) but not yet for AASIST; supporting metrics (precision, recall, F1, ROC-AUC) were not captured for either model in the current training run. Evaluation-set EER, the primary comparison metric, is available for all eight models.
 
 \renewcommand{\arraystretch}{1.4}
 \setlength{\tabcolsep}{6pt}
@@ -12,24 +12,19 @@ Table~\ref{tab:baseline_comparison} reports the overall comparison across baseli
 \hline
 \textbf{Model} & \textbf{Dev EER (\%)} & \textbf{Eval EER (\%)} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{ROC-AUC} \\
 \hline
-RawNet2 & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
-AASIST & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
-NeXt-TDNN & 7.36 & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
-Spectro-AASIST & \textit{[FILL IN EXACT VALUE]} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
-XGBoost & 6.66 & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
-Random Forest & 7.13 & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
-SVM & 2.86 & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
-GBM & 5.38 & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+RawNet2 & 5.87 & 36.04 & n/a & n/a & n/a & n/a \\
+AASIST & n/a & 29.12 & n/a & n/a & n/a & n/a \\
+NeXt-TDNN & 7.36 & \textbf{7.36} & 0.980 & \textbf{0.926} & 0.952 & n/a \\
+Spectro-AASIST & n/a & 15.09 & 0.597 & 0.849 & 0.701 & n/a \\
+XGBoost & 6.28 & 13.20 & \textbf{0.998} & 0.734 & 0.846 & \textbf{0.985} \\
+Random Forest & 6.46 & 12.85 & 0.985 & 0.922 & \textbf{0.953} & 0.984 \\
+SVM & \textbf{3.75} & 7.69 & 0.99 & 0.83 & 0.90 & 0.98 \\
+GBM & 4.66 & 9.55 & 0.98 & 0.87 & 0.92 & 0.97 \\
 \hline
 \end{tabularx}
+\vspace{2pt}
 \end{table}
 
-Among models evaluated to date, SVM achieves the lowest development-set EER (2.86\%), followed by GBM (5.38\%), XGBoost (6.66\%), and Random Forest (7.13\%). Precision, recall, F1-score, and ROC-AUC will be reported once the corresponding decision thresholds have been calibrated on the full training partition; supporting metrics for the current 20,000-utterance subset are available internally and will be incorporated alongside the full-dataset figures for consistency. NeXt-TDNN's reported development EER (7.36\%) falls within the range of the classical baselines, ahead of Random Forest but behind SVM, GBM, and XGBoost on the same metric, though the two are not yet evaluated under identical data conditions and this comparison should be treated as preliminary.
+Ranked by evaluation-set EER, the primary comparison metric, NeXt-TDNN (7.36\%) and SVM (7.69\%) are the strongest baselines, followed by GBM (9.55\%), Random Forest (12.85\%), XGBoost (13.20\%), and Spectro-AASIST (15.09\%); RawNet2 (36.04\%) and AASIST (29.12\%) trail well behind the rest. This is a notable result: AASIST and RawNet2 are widely reported to achieve sub-1\% EER on the ASVspoof 2019 LA benchmark, yet substantially underperform both the classical baselines and the lighter-weight NeXt-TDNN on ASVspoof5 in this project's current training run. Since both models use the same full-utterance training configuration described in Section~5.3, this gap is flagged as a priority to investigate before the final report rather than resolved into a definitive explanation here. RawNet2's newly captured development-set EER (5.87\%) is competitive with the classical baselines (comparable to XGBoost's 6.28\% and Random Forest's 6.46\%), which sharpens rather than resolves the question: under-training would be expected to produce a poor development-set score as well, so RawNet2's good development-set performance alongside its poor evaluation-set performance points instead toward a generalization gap between the attack types seen during training and development and the 16 wholly unseen attack algorithms introduced only in the evaluation partition (Section~5.1). Whether the same explanation extends to AASIST cannot yet be confirmed, since its development-set EER has not been captured.
 
-% TODO: insert grouped bar chart comparing dev EER across all baseline models
-% \begin{figure}[H]
-% \centering
-% \includegraphics[width=0.8\textwidth]{figures/baseline_comparison_eer.png}
-% \caption{Development-set EER across all baseline models.}
-% \label{fig:baseline_comparison}
-% \end{figure}
+Among the classical baselines, Random Forest offers the most balanced operating point (98.5\% precision, 92.2\% recall, F1 0.953), while XGBoost's near-perfect precision (0.998) comes at the cost of substantially lower recall (0.734), indicating that it rejects almost no genuine bonafide speech but also misses more spoofed utterances. Spectro-AASIST shows the opposite pattern among the deep models with supporting metrics available: low precision (0.597) with moderate recall (0.849), suggesting it over-flags bonafide speech as spoofed, consistent with its higher EER relative to the classical baselines.
