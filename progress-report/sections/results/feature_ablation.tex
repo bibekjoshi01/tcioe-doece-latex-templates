@@ -21,7 +21,7 @@ Concatenated (handcrafted + WavLM) & 26.54 & 23.28 & 22.58 & 23.56 \\
 \end{tabularx}
 \end{table}
 
-Handcrafted acoustic features were the weakest representation across every model, by a wide margin. Concatenation with WavLM embeddings improved performance for Random Forest alone; for XGBoost, GBM and SVM, concatenation performed worse than WavLM embeddings used in isolation, suggesting that the lower-dimensional handcrafted block introduced noise that these models did not discount as effectively as Random Forest's per-tree feature subsampling.
+Handcrafted acoustic features were the weakest representation across every model, by a wide margin. Concatenating them with WavLM embeddings only helped Random Forest; for XGBoost, GBM, and SVM, concatenation performed worse than WavLM alone, suggesting the lower-dimensional handcrafted block added noise that these models did not discount as well as Random Forest's per-tree feature subsampling does.
 
 Table~\ref{tab:wavlm_config_ablation} compares three of the four candidate WavLM configurations (base vs.\ large checkpoint; last-layer vs.\ all-layer-averaged pooling), using the WavLM-only feature source established above. The base-checkpoint, all-layer-averaged configuration was not evaluated, as the large-checkpoint results below were already sufficient to choose the final selection.
 
@@ -41,12 +41,4 @@ Large, all-layer averaged (selected) & 10.19 & 10.98 & 6.23 & 7.74 \\
 \end{tabularx}
 \end{table}
 
-The improvement from the base to the large WavLM checkpoint (last-layer pooling) accounts for the majority of the overall gain, reducing EER by 5--10 points across all four models. All-layer-averaged pooling on top of the large checkpoint contributed a further, smaller improvement of 3--5 points across all models. Both changes were therefore retained, and WavLM-large with all-layer-averaged pooling was adopted as the final representation.
-
-% TODO: insert bar chart comparing the four WavLM configurations across models (Figure)
-% \begin{figure}[H]
-% \centering
-% \includegraphics[width=0.8\textwidth]{figures/wavlm_config_ablation.png}
-% \caption{Development-set EER across WavLM configurations, by model.}
-% \label{fig:wavlm_config_ablation}
-% \end{figure}
+The improvement from the base to the large WavLM checkpoint (last-layer pooling) accounts for most of the overall gain, reducing EER by 5--10 points across all four models. All-layer-averaged pooling on top of the large checkpoint adds a further, smaller improvement of 3--5 points across all models. Both changes were kept, and WavLM-large with all-layer-averaged pooling was adopted as the final representation.
