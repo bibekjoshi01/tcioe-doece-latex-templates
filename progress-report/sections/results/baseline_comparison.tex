@@ -25,6 +25,22 @@ GBM & 4.66 & 9.55 & 0.98 & 0.87 & 0.92 & 0.97 \\
 \vspace{2pt}
 \end{table}
 
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.95\textwidth]{images/results/ml_baselines.png}
+\caption{FAR/FRR curves and evaluation-set EER for the four classical ML baselines.}
+\label{fig:ml_baselines_eer}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.95\textwidth]{images/results/dl_baselines.png}
+\caption{FAR/FRR curves and evaluation-set EER for the four deep learning baselines.}
+\label{fig:dl_baselines_eer}
+\end{figure}
+
+In each panel, the False Accept Rate (FAR) and False Reject Rate (FRR) curves are plotted against the decision threshold on the evaluation set, and their crossing point marks the EER reported in Table~\ref{tab:baseline_comparison}. Figure~\ref{fig:dl_baselines_eer} makes the RawNet2/AASIST evaluation-set degradation visually explicit: their FAR and FRR curves cross much later, and at a much higher error rate, than the tightly clustered crossings for NeXt-TDNN and Spectro-AASIST.
+
 Ranked by evaluation-set EER, the primary comparison metric, NeXt-TDNN (7.36\%) and SVM (7.69\%) are the strongest baselines, followed by GBM (9.55\%), Random Forest (12.85\%), XGBoost (13.20\%), and Spectro-AASIST (15.09\%). AASIST (29.12\%) and RawNet2 (36.04\%) trail well behind everything else. Both are widely reported to reach sub-1\% EER on the ASVspoof 2019 LA benchmark, so finishing last on ASVspoof5 is unexpected and is flagged as a priority to investigate before the final report.
 
 The two models do not fail in the same way, though. AASIST's development-set EER (6.34\%) is close to XGBoost's (6.28\%) and Random Forest's (6.46\%): on development data it looks like a normal, competitive model, then falls apart on evaluation. That pattern points to a generalization gap: the evaluation partition introduces 16 spoofing attack types that never appear in training or development (Section~5.1), and AASIST may simply not have learned features general enough to catch them. RawNet2 does not show that pattern. Its development-set EER (10.87\%) is already the worst of all eight models, so its evaluation-set collapse looks less like a generalization gap and more like a genuine training problem, whether that is under-training, a bad hyperparameter under the full-utterance training regime (Section~5.3), or something else entirely.

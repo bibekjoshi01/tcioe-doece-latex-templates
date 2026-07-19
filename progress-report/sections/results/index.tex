@@ -1,9 +1,9 @@
 \newpage
 \section{RESULTS AND ANALYSIS}
 
-This section reports the results of the baseline implementation described in the Implementation chapter, obtained under the clean-audio evaluation protocols defined for the classical and deep learning baselines. All ablation results are computed on the ASVspoof5 development partition; the evaluation partition is touched exactly once, in the final baseline comparison (Section~6.4), consistent with the train/development/evaluation discipline followed throughout. Results involving RTC-induced distortion (codec compression, packet loss, receiver-side enhancement) are outside the scope of this progress report and are deferred to the final report, once the RTC-aware augmentation pipeline is integrated.
+This section reports the results of the baseline implementation described in the Implementation chapter, obtained under the clean-audio evaluation protocols defined for the classical and deep learning baselines. All comparison results are computed on the ASVspoof5 development partition; the evaluation partition is touched exactly once, in the final baseline comparison (Section~6.4), consistent with the train/development/evaluation discipline followed throughout. Results involving RTC-induced distortion (codec compression, packet loss, receiver-side enhancement) are outside the scope of this progress report and are deferred to the final report, once the RTC-aware augmentation pipeline is integrated.
 
-The subsections below mirror the ablation structure introduced for the classical baselines: feature representation, duration matching, and the XGBoost regularization sweep, followed by the overall comparison across all eight baseline models.
+The subsections below mirror the comparison structure introduced for the classical baselines: feature representation, duration matching, and the XGBoost regularization sweep, followed by the overall results across all eight baseline models.
 
 \input{sections/results/feature_ablation}
 \input{sections/results/duration_ablation}

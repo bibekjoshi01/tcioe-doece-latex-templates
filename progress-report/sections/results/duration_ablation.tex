@@ -1,4 +1,4 @@
-\subsection{Duration Matching Ablation}
+\subsection{Duration Matching Comparison}
 
 Feature extraction for the classical baselines uses a fixed audio duration per utterance. Table~\ref{tab:duration_ablation} compares three duration configurations, evaluated using the selected WavLM-large, all-layer-averaged representation on the same 20,000-utterance development subset: a fixed 1.0-second duration, a duration sampled uniformly at random in the 1.0--3.0-second range per utterance, and a fixed 3.0-second duration.
 
@@ -6,7 +6,7 @@ Feature extraction for the classical baselines uses a fixed audio duration per u
 \setlength{\tabcolsep}{8pt}
 \begin{table}[H]
 \centering
-\caption{Duration Configuration Ablation (Development Set EER, \%)}
+\caption{Duration Configuration Comparison (Development Set EER, \%)}
 \label{tab:duration_ablation}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.5cm} *{4}{>{\centering\arraybackslash}X}}
 \hline

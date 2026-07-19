@@ -121,7 +121,7 @@ Four deep learning architectures are employed as candidate classifiers, spanning
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.55\textwidth]{images/methodology/rawnet2.png}
+\includegraphics[width=1\textwidth]{images/methodology/rawnet2.png}
 \caption{RawNet2 architecture \cite{Tak2021_rawnet2}.}
 \label{fig:rawnet2_arch}
 \end{figure}
@@ -139,7 +139,7 @@ Four deep learning architectures are employed as candidate classifiers, spanning
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{images/methodology/next_tdnn.png}
+\includegraphics[width=0.9\textwidth]{images/methodology/next_tdnn.png}
 \caption{NeXt-TDNN architecture \cite{Heo2024_nexttdnn}}
 \label{fig:nexttdnn_arch}
 \end{figure}
@@ -160,7 +160,7 @@ Four classical classifiers are employed as computationally efficient baselines: 
 
 \textbf{XGBoost} \cite{Chen2016_xgboost} (Extreme Gradient Boosting) builds an additive ensemble of shallow decision trees in a stage-wise manner: each new tree is fit to the negative gradient of the loss function with respect to the current ensemble's predictions, and its contribution is scaled by a learning rate before being added to the ensemble. XGBoost regularizes tree complexity directly in its objective function, via L1 and L2 penalties on leaf weights and a penalty on the number of leaves, which controls overfitting more explicitly than classical gradient boosting implementations. Its ensemble-of-trees decision function makes each prediction attributable to a small number of interpretable feature splits, in contrast to the distributed representations learned by the deep learning models above.
 
-\textbf{Random Forest} \cite{Breiman2001_rf} instead builds an ensemble of decision trees independently and in parallel: each tree is trained on a bootstrap-resampled subset of the training utterances and restricted to a random subset of features at each split (bagging). Predictions are combined by averaging across all trees, which reduces the variance of the individual, typically deep and unregularized, trees without materially increasing bias. Because each tree sees a different random subset of both utterances and features, Random Forest is naturally more tolerant of a weak or partially redundant feature block than boosting-based methods, a property already observed in this project's own ablations.
+\textbf{Random Forest} \cite{Breiman2001_rf} instead builds an ensemble of decision trees independently and in parallel: each tree is trained on a bootstrap-resampled subset of the training utterances and restricted to a random subset of features at each split (bagging). Predictions are combined by averaging across all trees, which reduces the variance of the individual, typically deep and unregularized, trees without materially increasing bias. Because each tree sees a different random subset of both utterances and features, Random Forest is naturally more tolerant of a weak or partially redundant feature block than boosting-based methods, a property already observed in this project's own comparisons.
 
 \textbf{Support Vector Machine (SVM)} \cite{Cortes1995_svm} takes a different approach, learning a maximum-margin decision boundary between the bonafide and spoof classes rather than an ensemble of trees. With a radial basis function (RBF) kernel, the decision boundary is computed implicitly in a high-dimensional feature space without explicitly constructing that space, allowing SVM to model non-linear decision boundaries using only the training samples closest to the margin (the support vectors). Since the standard SVM formulation produces an uncalibrated decision score rather than a probability, probability calibration is applied so that a comparable Equal Error Rate can be computed against the other classifiers.
 

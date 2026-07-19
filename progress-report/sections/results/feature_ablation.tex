@@ -1,6 +1,6 @@
-\subsection{Feature Representation Ablation}
+\subsection{Feature Representation Comparison}
 
-A systematic ablation was conducted on the development set (20,000-utterance stratified training subset) to select the feature representation used by the four classical classifiers, across two axes: feature source and WavLM configuration.
+A systematic comparison was conducted on the development set (20,000-utterance stratified training subset) to select the feature representation used by the four classical classifiers, across two axes: feature source and WavLM configuration.
 
 Table~\ref{tab:feature_source_ablation} compares handcrafted acoustic features, WavLM embeddings, and their concatenation, as inputs to each classical model (WavLM base checkpoint, last-layer pooling).
 
@@ -8,7 +8,7 @@ Table~\ref{tab:feature_source_ablation} compares handcrafted acoustic features, 
 \setlength{\tabcolsep}{8pt}
 \begin{table}[H]
 \centering
-\caption{Feature-Source Ablation (Development Set EER, \%)}
+\caption{Feature-Source Comparison (Development Set EER, \%)}
 \label{tab:feature_source_ablation}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.3cm} *{4}{>{\centering\arraybackslash}X}}
 \hline
@@ -27,7 +27,7 @@ Table~\ref{tab:wavlm_config_ablation} compares three of the four candidate WavLM
 
 \begin{table}[H]
 \centering
-\caption{WavLM Configuration Ablation (Development Set EER, \%)}
+\caption{WavLM Configuration Comparison (Development Set EER, \%)}
 \label{tab:wavlm_config_ablation}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.3cm} *{4}{>{\centering\arraybackslash}X}}
 \hline
