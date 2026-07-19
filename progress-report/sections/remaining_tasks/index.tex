@@ -1,29 +1,34 @@
 \newpage
 \section{REMAINING TASKS}
 
-Table~\ref{tab:impl_status} summarizes work completed for this progress report against work planned for the final report, consistent with the two-phase scope described throughout the Implementation chapter (Section~5): baseline and SOTA model reproduction on clean ASVspoof5 now, and RTC-aware pipeline integration with the corresponding robustness evaluation for the final phase.
+Table~\ref{tab:impl_status} lists the work remaining after this progress report, consistent with the two-phase scope described throughout the Implementation chapter (Section~5): baseline and SOTA model reproduction on clean ASVspoof5 is complete, and the items below cover the ablation completion and RTC-aware pipeline integration planned for the final report.
 
 \renewcommand{\arraystretch}{1.5}
 \setlength{\tabcolsep}{8pt}
-\begin{table}[H]
-\centering
-\caption{Implementation and Evaluation Status}
-\label{tab:impl_status}
-\begin{tabular}{p{5.5cm} p{4cm} p{3.5cm}}
+\begin{longtable}{>{\raggedright\arraybackslash}p{4.2cm} >{\raggedright\arraybackslash}p{8.5cm}}
+\caption{Remaining Tasks and Execution Plan} \label{tab:impl_status} \\
 \hline
-\textbf{Component} & \textbf{Status} & \textbf{Target} \\
+\textbf{Remaining Task} & \textbf{Plan to Execute} \\
 \hline
-Dataset preparation (ASVspoof5, Section~5.1) & Completed & Progress report \\
-Classical ML baselines: XGBoost, Random Forest, SVM, Gradient Boosting (Section~5.2) & Completed & Progress report \\
-Deep learning baselines: RawNet2, AASIST (clean-audio training, Section~5.3) & Completed & Progress report \\
-Baseline results and ablation analysis (Section~6) & In progress & Progress report \\
-RTC-aware distortion pipeline: codec round-trip, packet-loss simulation, post-processing (Section~4.8.1) & Designed; implementation pending & Final report \\
-RTC transmission pipeline integration: sender, network, receiver subsystems (Sections~4.1--4.4) & Designed; implementation pending & Final report \\
-Detection service integration with RTC pipeline (Sections~4.5--4.6) & Designed; implementation pending & Final report \\
-RTC distortion robustness evaluation across codecs and packet-loss rates (Section~4.8) & Pending pipeline integration & Final report \\
-Real-time performance profiling: latency, throughput, resource utilization (Section~4.7) & Pending pipeline integration & Final report \\
+\endfirsthead
 \hline
-\end{tabular}
-\end{table}
+\textbf{Remaining Task} & \textbf{Plan to Execute} \\
+\hline
+\endhead
+\hline
+\endfoot
+Baseline results and ablation analysis (Section~6) &
+Complete RawNet2 and AASIST training and evaluation on the full ASVspoof5 training partition, then populate the \textit{TBD} entries in the comparison table (Section~6.4) with measured metrics. \\
+RTC-aware distortion pipeline: codec round-trip, packet-loss simulation, post-processing (Section~4.8.1) &
+Implement the codec round-trip (Opus, G.711, AAC via \texttt{ffmpeg}), the Gilbert--Elliott bursty packet-loss simulator, and the AGC/high-pass post-processing stage, gated by a clean-sample probability during training. \\
+RTC transmission pipeline integration: sender, network, receiver subsystems (Sections~4.1--4.4) &
+Implement the sender-side capture/encoding/packetization chain, the network impairment layer, and the receiver-side jitter-buffer/PLC/decoding/enhancement chain, reusing the codec and packet-loss models built for the augmentation pipeline above. \\
+Detection service integration with RTC pipeline (Sections~4.5--4.6) &
+Deploy the trained detection models behind the streaming API (gRPC/HTTP) described in Section~4.5, connect it to the receiver-side output, and validate chunked inference and temporal aggregation end-to-end. \\
+RTC distortion robustness evaluation across codecs and packet-loss rates (Section~4.8) &
+Re-evaluate all eight baseline models under the full codec $\times$ packet-loss-rate sweep, using the same EER-based protocol established in Sections~5.2.5 and~5.3.5, to quantify degradation relative to the clean-audio results in Section~6.4. \\
+Real-time performance profiling: latency, throughput, resource utilization (Section~4.7) &
+Measure inference latency, throughput, and memory/CPU/GPU utilization for each model behind the deployed detection service, using the metrics defined in Section~4.7.2. \\
+\end{longtable}
 
-The clean-audio baseline comparison established in this phase provides the reference operating points for each of the six models (Section~6.4). These reference points will be used to measure the extent of RTC-induced performance degradation once the RTC-aware augmentation pipeline described in Section~4.8.1 is integrated, directly addressing the RTC distortion robustness research question defined in Section~4.8.
+The clean-audio baseline comparison established in this phase provides the reference operating points for each of the eight models (Section~6.4). These reference points will be used to measure the extent of RTC-induced performance degradation once the RTC-aware augmentation pipeline described in Section~4.8.1 is integrated, directly addressing the RTC distortion robustness research question defined in Section~4.8.

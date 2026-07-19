@@ -103,9 +103,9 @@ The detector is not relying solely on raw waveform patterns; it operates on repr
 
 \subsubsection{Classification Model Design}
 
-The classification module is responsible for determining whether a reconstructed RTC audio segment corresponds to real human speech or AI-generated synthetic speech. To evaluate both detection performance and real-time deployment feasibility, two complementary classification approaches are employed: AASIST and XGBoost.
+The classification module is responsible for determining whether a reconstructed RTC audio segment corresponds to real human speech or AI-generated synthetic speech. To evaluate both detection performance and real-time deployment feasibility, two complementary families of classification approaches are employed: deep learning architectures that operate directly on waveform or spectrogram representations, and classical machine learning classifiers that operate on extracted feature vectors.
 
-For each incoming audio chunk $x_t$, a feature representation $z_t$ is first extracted through the feature extraction pipeline. The resulting representation is then forwarded to a classification model that estimates the probability that the observed speech segment is spoofed.
+For each incoming audio chunk $x_t$, a feature representation $z_t$ is first extracted through the feature extraction pipeline (classical classifiers) or the raw chunk itself is used directly (deep learning classifiers). The resulting representation is then forwarded to a classification model that estimates the probability that the observed speech segment is spoofed.
 
 The classification process is defined as
 \begin{equation}
@@ -113,31 +113,68 @@ s_t = \mathcal{C}(z_t),
 \end{equation}
 where $z_t$ denotes the extracted feature representation, $\mathcal{C}(\cdot)$ represents the classifier, and $s_t \in [0,1]$ is the spoofing probability assigned to audio chunk $t$.
 
-\textbf{AASIST-Based Classification}
+\textbf{Deep Learning Classification}
 
-AASIST (Audio Anti-Spoofing using Integrated Spectro-Temporal Graph Attention Networks) serves as the primary deep learning detector in the proposed framework. Unlike conventional architectures that process temporal and spectral information separately, AASIST models speech as a heterogeneous graph and learns relationships between temporal and frequency-domain representations through graph attention mechanisms.
+Four deep learning architectures are employed as candidate classifiers, spanning an established raw-waveform baseline, the graph-attention design adopted as the primary detector, a modernized lightweight backbone, and a spectrogram-domain variant of the graph-attention design.
 
-Given an input audio segment $x_t$, AASIST directly extracts discriminative spoofing representations and produces a spoofing score
+\textbf{RawNet2} \cite{Tak2021_rawnet2} is an established end-to-end raw-waveform baseline in the ASVspoof anti-spoofing literature, combining a SincNet-style front end with the residual-and-recurrent backbone of the original RawNet architecture. The first layer is a SincConv layer: a bank of parameterized, band-pass Sinc filters with a fixed kernel length of 129 samples, whose cutoff frequencies are learned directly from data rather than through generic convolutional kernels. The resulting representation is max-pooled and passed through six residual blocks, each applying batch normalization, a leaky ReLU activation, and convolution, followed by Filter-wise Feature Map Scaling (FMS): a sigmoid-gated attention mechanism that rescales each channel's feature map to emphasize the most discriminative filters. The output of the residual stack is aggregated over time by a single-layer Gated Recurrent Unit (GRU) with 1024 hidden units, producing a 1024-dimensional utterance embedding, which is passed through a fully-connected layer and a final two-class output layer. Figure~\ref{fig:rawnet2_arch} illustrates this pipeline. RawNet2 provides a reference point against which the graph-attention architectures below are compared, since it represents an earlier design stage in the same architectural lineage that AASIST later extends.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.55\textwidth]{images/methodology/rawnet2.png}
+\caption{RawNet2 architecture \cite{Tak2021_rawnet2}.}
+\label{fig:rawnet2_arch}
+\end{figure}
+
+\textbf{AASIST} \cite{Jung2022_aasist} (Audio Anti-Spoofing using Integrated Spectro-Temporal Graph Attention Networks) serves as the primary deep learning detector in the proposed framework. It reuses a RawNet2-style encoder (a SincConv front end followed by residual blocks) to obtain a high-level spectro-temporal feature map, but replaces RawNet2's GRU-based temporal aggregation with a graph-attention backbone that models spectral and temporal relationships jointly rather than separately. The encoder output is used to construct a spectral graph and a temporal graph, each processed independently by a Max Graph Operation (MGO): two parallel Heterogeneous Stacking Graph Attention Layers (HS-GAL) followed by graph pooling, combined element-wise by a max operation analogous to a max-feature-map non-linearity. The resulting spectral and temporal graphs are then fused by a further HS-GAL layer, which introduces a heterogeneity-aware attention mechanism together with an additional stack node that explicitly models the relationship between the two domains, followed by two more rounds of HS-GAL and graph pooling. A readout operation concatenates the node-wise maximum and average representations together with the stack node, and the result is passed to a fully-connected output layer that produces the final spoofing score. Figure~\ref{fig:aasist_arch} illustrates this pipeline. AASIST is selected as the primary detector because it reports state-of-the-art performance on ASVspoof benchmarks while remaining relatively compact, and its explicit modeling of both spectral and temporal artifact structure is well matched to the codec- and packet-loss-induced distortions this project ultimately targets.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1\textwidth]{images/methodology/aasist.png}
+\caption{AASIST architecture \cite{Jung2022_aasist}.}
+\label{fig:aasist_arch}
+\end{figure}
+
+\textbf{NeXt-TDNN} \cite{Heo2024_nexttdnn}, originally proposed for speaker verification, is repurposed here as a lighter-weight time-delay architecture. It follows the overall Time-Delay Neural Network (TDNN) design established by ECAPA-TDNN, but replaces the Squeeze-Excitation Res2Net (SE-Res2Net) block used in that architecture with a Two-Step ConvNeXt (TS-ConvNeXt) block, following the design philosophy of ConvNeXt in computer vision. Each TS-ConvNeXt block separates inter-frame and intra-frame modeling into two sub-modules: a Multi-Scale Convolution (MSC) module, which applies parallel depthwise 1-D convolutions at different kernel scales to capture inter-frame temporal context, and a frame-wise Feed-Forward Network (FFN) that models intra-frame, channel-wise context and applies Global Response Normalization (GRN) in place of the squeeze-excitation gating used in ECAPA-TDNN. A stack of these blocks is followed by multi-layer feature aggregation and attentive statistics pooling, mirroring the standard TDNN speaker-embedding pipeline. Since the original architecture is designed for speaker verification, its speaker-embedding output head is replaced here with a two-class detection head that scores each segment as bonafide or spoofed. Figure~\ref{fig:nexttdnn_arch} illustrates this pipeline. NeXt-TDNN is included as a lighter-weight architecture relative to RawNet2 and AASIST, providing a comparison point on the accuracy/efficiency trade-off relevant to real-time deployment.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{images/methodology/next_tdnn.png}
+\caption{NeXt-TDNN architecture \cite{Heo2024_nexttdnn}}
+\label{fig:nexttdnn_arch}
+\end{figure}
+
+In this project, the original speaker-embedding output is replaced with a two-class detection head.
+
+\textbf{Spectro-AASIST} adapts the AASIST \cite{Jung2022_aasist} graph-attention design to operate on spectrogram (time-frequency) input rather than the raw waveform used by the original AASIST front end. The RawNet2-style raw-waveform encoder is replaced with a spectrogram extraction stage (short-time Fourier transform or mel-spectrogram) followed by a convolutional front end that produces a feature map of comparable shape to AASIST's encoder output; the spectral graph module, temporal graph module, HS-GAL fusion, and readout stages that follow are otherwise identical to AASIST (Figure~\ref{fig:aasist_arch}). This variant evaluates whether a spectrogram-domain front end, which discards the fine-grained phase and sample-level detail available to a raw-waveform encoder but is more directly comparable to the acoustic feature representations used by the classical classifiers below, changes detection performance or robustness relative to AASIST's raw-waveform variant under an otherwise identical graph-attention backbone.
+
+Given an input representation $x_t$ (raw waveform for AASIST, RawNet2, and NeXt-TDNN, or a spectrogram for Spectro-AASIST), each deep learning model directly extracts discriminative spoofing representations and produces a spoofing score
 \begin{equation}
-s_t^{AASIST} = \mathcal{A}(x_t),
+s_t^{DL} = \mathcal{A}(x_t),
 \end{equation}
-where $\mathcal{A}(\cdot)$ denotes the AASIST network. The model learns artifacts introduced by Text-to-Speech (TTS), Voice Conversion (VC), and other speech synthesis techniques, making it highly effective for audio deepfake detection. Due to its state-of-the-art performance on ASVspoof benchmarks and relatively compact architecture, AASIST is selected as the primary detector for evaluating robustness under RTC-induced degradations such as codec compression, packet loss, jitter buffering, and packet loss concealment.
+where $\mathcal{A}(\cdot)$ denotes the deep learning network in question. All four models learn artifacts introduced by Text-to-Speech (TTS), Voice Conversion (VC), and other speech synthesis techniques, making them effective for audio deepfake detection: AASIST's graph attention and RawNet2's residual-recurrent backbone target these artifacts directly in the waveform domain, while NeXt-TDNN's multi-scale convolutions and Spectro-AASIST's spectrogram front end offer complementary inductive biases. Due to its state-of-the-art performance on ASVspoof benchmarks and relatively compact architecture, AASIST is selected as the primary detector for evaluating robustness under RTC-induced degradations such as codec compression, packet loss, jitter buffering, and packet loss concealment, with the remaining three architectures providing comparison points along the accuracy/efficiency spectrum.
 
-\textbf{XGBoost-Based Classification}
+\textbf{Classical Machine Learning Classification}
 
-XGBoost (Extreme Gradient Boosting) is employed as a computationally efficient baseline model. Unlike AASIST, which operates directly on waveform representations, XGBoost utilizes handcrafted acoustic features extracted from reconstructed RTC audio streams.
+Four classical classifiers are employed as computationally efficient baselines: \textbf{XGBoost} \cite{Chen2016_xgboost}, \textbf{Random Forest} \cite{Breiman2001_rf}, \textbf{Support Vector Machine (SVM)} \cite{Cortes1995_svm}, and histogram-based \textbf{Gradient Boosting (GBM)} \cite{Ke2017_lightgbm, Friedman2001_gb}, implemented using scikit-learn \cite{Pedregosa2011_sklearn}. Unlike the deep learning models, which operate directly on waveform or spectrogram representations, the classical classifiers utilize handcrafted acoustic features and/or self-supervised embeddings extracted from reconstructed RTC audio streams.
 
-For each audio chunk, feature vectors consisting of Mel-Frequency Cepstral Coefficients (MFCCs), spectral statistics, energy-related descriptors, and other acoustic characteristics are extracted and represented as
+\textbf{XGBoost} \cite{Chen2016_xgboost} (Extreme Gradient Boosting) builds an additive ensemble of shallow decision trees in a stage-wise manner: each new tree is fit to the negative gradient of the loss function with respect to the current ensemble's predictions, and its contribution is scaled by a learning rate before being added to the ensemble. XGBoost regularizes tree complexity directly in its objective function, via L1 and L2 penalties on leaf weights and a penalty on the number of leaves, which controls overfitting more explicitly than classical gradient boosting implementations. Its ensemble-of-trees decision function makes each prediction attributable to a small number of interpretable feature splits, in contrast to the distributed representations learned by the deep learning models above.
+
+\textbf{Random Forest} \cite{Breiman2001_rf} instead builds an ensemble of decision trees independently and in parallel: each tree is trained on a bootstrap-resampled subset of the training utterances and restricted to a random subset of features at each split (bagging). Predictions are combined by averaging across all trees, which reduces the variance of the individual, typically deep and unregularized, trees without materially increasing bias. Because each tree sees a different random subset of both utterances and features, Random Forest is naturally more tolerant of a weak or partially redundant feature block than boosting-based methods, a property already observed in this project's own ablations.
+
+\textbf{Support Vector Machine (SVM)} \cite{Cortes1995_svm} takes a different approach, learning a maximum-margin decision boundary between the bonafide and spoof classes rather than an ensemble of trees. With a radial basis function (RBF) kernel, the decision boundary is computed implicitly in a high-dimensional feature space without explicitly constructing that space, allowing SVM to model non-linear decision boundaries using only the training samples closest to the margin (the support vectors). Since the standard SVM formulation produces an uncalibrated decision score rather than a probability, probability calibration is applied so that a comparable Equal Error Rate can be computed against the other classifiers.
+
+\textbf{Gradient Boosting (GBM)}, implemented via scikit-learn's histogram-based \texttt{HistGradientBoostingClassifier} \cite{Pedregosa2011_sklearn, Ke2017_lightgbm} rather than the classical \texttt{GradientBoostingClassifier} \cite{Friedman2001_gb}, follows the same stage-wise additive boosting principle as XGBoost, but bins continuous feature values into a fixed number of histogram buckets before searching for tree splits. This trades a small amount of split precision for a substantial reduction in training time on high-dimensional embedding features, following the histogram-based strategy popularized by LightGBM \cite{Ke2017_lightgbm}.
+
+For each audio chunk, feature vectors consisting of Mel-Frequency Cepstral Coefficients (MFCCs), spectral statistics, energy-related descriptors, and other acoustic characteristics, or pretrained self-supervised embeddings, are extracted and represented as
 \begin{equation}
 z_t = [f_1,f_2,\ldots,f_n].
 \end{equation}
-The feature vector is then provided to the XGBoost classifier:
+The feature vector is then provided to the classical classifier in question:
 \begin{equation}
-s_t^{XGB} = \mathcal{X}(z_t),
+s_t^{ML} = \mathcal{X}(z_t),
 \end{equation}
-where $\mathcal{X}(\cdot)$ denotes the trained XGBoost model. The classifier generates a spoofing probability based on an ensemble of gradient-boosted decision trees.
-
-XGBoost is included because previous studies have demonstrated that it achieves strong detection performance while maintaining extremely low inference latency. Consequently, it provides an effective benchmark for assessing the trade-off between detection accuracy and real-time computational efficiency.
+where $\mathcal{X}(\cdot)$ denotes the trained classical model (XGBoost, Random Forest, SVM, or GBM). These classical models are included because previous studies have demonstrated that tree-based and margin-based classifiers can achieve strong detection performance while maintaining extremely low inference latency and greater interpretability than end-to-end deep networks \cite{Bird2023}. Consequently, they provide an effective benchmark for assessing the trade-off between detection accuracy and real-time computational efficiency.
 
 \subsubsection{Temporal Aggregation and Decision Stabilization}
 

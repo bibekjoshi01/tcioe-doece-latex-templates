@@ -1,6 +1,6 @@
 \subsection{XGBoost Regularization Sweep}
 
-As noted in Section~5.2.3, an initial deeper, less-regularized XGBoost configuration exhibited severe overfitting on the training set. Table~\ref{tab:xgb_regularization} contrasts this initial configuration with the shallow-tree, L1/L2-regularized configuration selected via the manual regularization sweep.
+An initial XGBoost configuration (deeper trees, 500 estimators, no additional L1/L2 penalty beyond scikit-learn defaults) was compared against a shallower, more heavily regularized configuration (reduced tree depth, increased \texttt{min\_child\_weight}, added L1/L2 regularization, fewer estimators). Table~\ref{tab:xgb_regularization} reports training and development EER for both.
 
 \renewcommand{\arraystretch}{1.4}
 \setlength{\tabcolsep}{8pt}
@@ -8,14 +8,14 @@ As noted in Section~5.2.3, an initial deeper, less-regularized XGBoost configura
 \centering
 \caption{XGBoost Regularization Sweep (EER, \%)}
 \label{tab:xgb_regularization}
-\begin{tabular}{l c c c}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{5.5cm} *{3}{>{\centering\arraybackslash}X}}
 \hline
 \textbf{Configuration} & \textbf{Training EER} & \textbf{Development EER} & \textbf{Train--Dev Gap} \\
 \hline
-Initial (deep, unregularized) & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
-Final (shallow, L1/L2-regularized, selected) & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+Initial (deep, unregularized) & 0.01 & 20.88 & 20.87 \\
+Final (shallow, L1/L2-regularized, selected) & 0.10 & 6.66 & 6.56 \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
-The initial configuration is expected to show near-zero training EER alongside a substantially higher development EER, indicating memorization of the training set rather than generalizable spoof-detection behavior; the regularized configuration is expected to narrow this gap, at the cost of a small increase in training EER, and is used for the XGBoost results reported in Section~6.4.
+The initial configuration showed near-zero training EER alongside substantially higher development EER, a signature of memorization rather than generalizable spoof-detection behavior. The regularized configuration reduced this gap by more than a factor of three. This comparison was conducted concurrently with the WavLM and duration configuration changes reported in Sections~6.1--6.2; the reduction in development EER shown here therefore reflects the combined effect of hyperparameter regularization together with the improved feature representation and duration configuration, rather than regularization in isolation. An isolated regularization-only comparison, holding features and duration fixed at their final selected configuration, is planned for the final report. The regularized configuration was used for all XGBoost results reported in Section~6.4.

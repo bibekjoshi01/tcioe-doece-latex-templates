@@ -1,19 +1,26 @@
 \subsection{Deep Learning Baseline Implementation}
 
-Four detector architectures have been implemented and trained on the ASVspoof5 partitions described in Section~5.1, in order to evaluate both detection performance and the accuracy/efficiency trade-off relevant to the real-time deployment goal of this project (Section~4.6). The four span a range of established design families in the anti-spoofing literature: an end-to-end raw-waveform residual-recurrent network, a graph-attention spectro-temporal network, a modernized time-delay architecture, and a spectrogram-domain variant of the graph-attention design.
+Four detector architectures have been implemented and trained on the ASVspoof5 partitions described in Section~5.1, in order to evaluate both detection performance and the accuracy/efficiency trade-off relevant to the real-time deployment goal of this project. The four span a range of established design families in the anti-spoofing literature: an end-to-end raw-waveform residual-recurrent network, a graph-attention spectro-temporal network, a modernized time-delay architecture, and a spectrogram-domain variant of the graph-attention design.
 
-\textbf{RawNet2} \cite{Tak2021_rawnet2} operates directly on the raw audio waveform through a SincConv front-end, a stack of residual blocks, and a Gated Recurrent Unit (GRU) layer for temporal modeling. It is reproduced here as an established, widely reported end-to-end baseline in the ASVspoof line of work, giving a reference point against which the remaining three architectures are compared. As an implementation detail, the SincConv filterbank is computed once at model initialization and registered as a fixed buffer, rather than recomputed on every forward pass; this is a computational efficiency change with no effect on the model's behavior or outputs.
+\subsubsection{Model Architectures}
 
-\textbf{AASIST} \cite{Jung2022_aasist} is the graph-attention spectro-temporal architecture already adopted as the primary detector design in Section~4.5. Rather than being cited only as a design choice, it has been trained directly on ASVspoof5 in this phase so that its reported state-of-the-art performance can be independently verified on the project's own data pipeline before RTC-aware training is introduced. AASIST extends RawNet2's front-end design with a graph attention network operating jointly over spectral and temporal graphs, replacing RawNet2's residual-and-GRU backbone as the mechanism for temporal aggregation.
+\textbf{RawNet2} \cite{Tak2021_rawnet2} operates directly on the raw audio waveform through a SincConv front-end with a fixed-length Sinc filter kernel of 129 samples, a stack of residual blocks, and a Gated Recurrent Unit (GRU) layer for temporal modeling. It is reproduced here as an established, widely reported end-to-end baseline in the ASVspoof line of work, giving a reference point against which the remaining three architectures are compared. As an implementation detail, the SincConv filterbank is computed once at model initialization and registered as a fixed buffer, rather than recomputed on every forward pass; this is a computational efficiency change with no effect on the model's behavior or outputs.
 
-\textbf{NeXt-TDNN} \cite{Heo2024_nexttdnn} is a modernized time-delay neural network architecture that incorporates recent convolutional design elements, including depthwise separable convolutions and updated normalization schemes, applied here to the spoof detection task. It is included as a lighter-weight architecture relative to RawNet2 and AASIST, providing a comparison point on the accuracy/efficiency trade-off relevant to real-time deployment.
+\textbf{AASIST} \cite{Jung2022_aasist} is the graph-attention spectro-temporal architecture already adopted as the primary detector design (architecture diagrams for all four models appear in Section~4.5.5). Rather than being cited only as a design choice, it has been trained directly on ASVspoof5 in this phase so that its reported state-of-the-art performance can be independently verified on the project's own data pipeline before RTC-aware training is introduced. AASIST extends a RawNet2-style encoder front-end (70 Sinc filters, 6 residual blocks) with a graph attention network operating jointly over spectral and temporal graphs, replacing RawNet2's residual-and-GRU backbone as the mechanism for temporal aggregation; graph pooling retains 50\% of spectral nodes and 30\% of temporal nodes at the first graph module, rising to 50\% of temporal nodes in the subsequent module, following the original architecture. As reported in the original paper, this architecture achieves an Equal Error Rate of 0.83\% and a minimum t-DCF of 0.0275 on the ASVspoof 2019 LA evaluation set \cite{Jung2022_aasist}, which motivates its selection as the primary SOTA detector for this project; the corresponding figures on ASVspoof5 are the clean-audio baseline results reported in Section~6.4, not yet available at the time of writing.
 
-\textbf{Spectro-AASIST} adapts the AASIST graph-attention design to operate on spectrogram (time-frequency) input rather than the raw waveform used by the original AASIST front end. It is included to evaluate whether a spectrogram-domain front end changes detection performance or robustness relative to AASIST's raw-waveform variant, under an otherwise equivalent graph-attention backbone.
+\textbf{NeXt-TDNN} \cite{Heo2024_nexttdnn} is a modernized time-delay neural network architecture, originally proposed for speaker verification, that replaces the multi-scale Res2Net-style convolutional blocks used in prior TDNN backbones with ConvNeXt-style blocks: depthwise separable convolutions with a larger temporal receptive field, an inverted bottleneck, and updated normalization. It is repurposed here for bonafide/spoof classification by replacing the speaker-embedding output head with a two-class detection head, and is included as a lighter-weight architecture relative to RawNet2 and AASIST, providing a comparison point on the accuracy/efficiency trade-off relevant to real-time deployment.
 
-All four models were trained on clean ASVspoof5 audio, without the RTC-aware augmentation pipeline (Section~5.2) applied at this stage; integration of RTC-aware training for all four architectures is planned for the final implementation phase.
+\textbf{Spectro-AASIST} adapts the AASIST \cite{Jung2022_aasist} graph-attention design to operate on spectrogram (time-frequency) input rather than the raw waveform used by the original AASIST front end. It is included to evaluate whether a spectrogram-domain front end changes detection performance or robustness relative to AASIST's raw-waveform variant, under an otherwise equivalent graph-attention backbone.
 
-% TODO: replace with actual training configuration for each model
-Training configuration for each model is summarized in Table~\ref{tab:dl_training_config}.
+All four models are trained on clean ASVspoof5 audio, without the RTC-aware augmentation pipeline described in Section~4.8.1 applied at this stage; integration of RTC-aware training for all four architectures is planned for the final implementation phase.
+
+\subsubsection{Audio Windowing}
+
+Unlike the fixed-duration input used in the original recipes, obtained via repeat-padding or truncation to 64,000 samples (4.0 seconds) for RawNet2 and to 64,600 samples (approximately 4.04 seconds) for AASIST and Spectro-AASIST, and the short random crops typically used to train NeXt-TDNN-style backbones for speaker verification, all four architectures in this project are trained and evaluated on the full-length audio of each ASVspoof5 utterance, without cropping or padding to a fixed duration. Since utterance length varies across the dataset, each training batch is zero-padded to the length of its longest member rather than to a fixed global duration; both the recurrent aggregation stage in RawNet2 and the graph-attention stage in AASIST and Spectro-AASIST operate on the resulting variable-length sequence, with padded positions excluded from temporal pooling. This choice trades the fixed-size batching efficiency of the original recipes for training directly on the same duration distribution present in the evaluation protocol, avoiding any discrepancy between training-time and inference-time input statistics that a fixed crop length would introduce.
+
+\subsubsection{Training Configuration}
+
+Table~\ref{tab:dl_training_config} summarizes the training configuration applied uniformly to all four architectures.
 
 \renewcommand{\arraystretch}{1.4}
 \setlength{\tabcolsep}{10pt}
@@ -21,16 +28,24 @@ Training configuration for each model is summarized in Table~\ref{tab:dl_trainin
 \centering
 \caption{Deep Learning Baseline Training Configuration}
 \label{tab:dl_training_config}
-\begin{tabular}{l c c c c}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.6cm} >{\centering\arraybackslash}p{3.6cm} *{3}{>{\centering\arraybackslash}X}}
 \hline
 \textbf{Model} & \textbf{Audio Window} & \textbf{Batch Size} & \textbf{Optimizer} & \textbf{Epochs} \\
 \hline
-RawNet2         & [FILL IN] & [FILL IN] & [FILL IN] & [FILL IN] \\
-AASIST          & [FILL IN] & [FILL IN] & [FILL IN] & [FILL IN] \\
-NeXt-TDNN       & [FILL IN] & [FILL IN] & [FILL IN] & [FILL IN] \\
-Spectro-AASIST  & [FILL IN] & [FILL IN] & [FILL IN] & [FILL IN] \\
+RawNet2         & Full utterance (variable-length) & 32 & AdamW & 100 \\
+AASIST          & Full utterance (variable-length) & 32 & AdamW & 100 \\
+NeXt-TDNN       & Full utterance (variable-length) & 32 & AdamW & 100 \\
+Spectro-AASIST  & Full utterance (variable-length) & 32 & AdamW & 100 \\
 \hline
-\end{tabular}
+\end{tabularx}
 \end{table}
 
-All four models were evaluated under the same development/evaluation discipline used for the classical ML baselines (Section~5.3): the development set was used for training-time monitoring and checkpoint selection, and the evaluation set was held out until a single final evaluation pass.ß
+The optimizer is AdamW \cite{Loshchilov2019_adamw}, the decoupled-weight-decay variant of Adam \cite{Kingma2015_adam}, used in place of the plain Adam optimizer reported in the original RawNet2 and AASIST recipes; batch size (32) and the total training budget (100 epochs) are applied identically across all four models to keep the training budget comparable across architectures. This batch size matches the original RawNet2 recipe exactly, while the original AASIST recipe instead used a batch size of 24, reported as requiring approximately 16GB of GPU memory; both are unified to 32 in this project. Where a hyperparameter is not fixed by the values above, it is adopted from the corresponding architecture's original paper: a learning rate of $1\times10^{-4}$ with a weight decay coefficient of $1\times10^{-4}$, following the configuration reported for RawNet2 \cite{Tak2021_rawnet2} and carried over for AASIST and Spectro-AASIST \cite{Jung2022_aasist}, which additionally use a cosine-annealed learning rate schedule over the course of training, as reported in the original AASIST recipe (implemented in PyTorch~1.6.0+). NeXt-TDNN's classification head and optimizer settings otherwise follow the same learning rate and weight decay, in the absence of a spoof-detection-specific recipe in the original speaker-verification paper \cite{Heo2024_nexttdnn}. Model selection uses the checkpoint with the lowest development-set EER observed over the 100 training epochs, consistent with the model-selection discipline used for the classical baselines.
+
+\subsubsection{Class-Imbalance Handling}
+
+Consistent with the class imbalance already noted for the ASVspoof5 splits and addressed for the classical baselines via sample and class weighting, the loss function for each deep learning model follows its own original paper rather than a single scheme applied uniformly. RawNet2 is trained with a Weighted Cross-Entropy (WCE) loss, using class weights of 1.0 (bonafide) and 9.0 (spoof), following the original recipe \cite{Tak2021_rawnet2}; this up-weights the minority bonafide class in proportion to its lower representation in the training partition. AASIST and Spectro-AASIST instead use a standard, unweighted cross-entropy loss, following the original AASIST recipe \cite{Jung2022_aasist}, which reports competitive performance without explicit class weighting. NeXt-TDNN has no published spoof-detection loss configuration to defer to \cite{Heo2024_nexttdnn}; in the absence of one, it adopts the same weighted cross-entropy scheme as RawNet2 (weights 1.0:9.0) as a reasonable default. This per-architecture asymmetry is retained deliberately rather than harmonized, consistent with this project's broader approach of adopting each baseline's own reported configuration wherever one exists.
+
+\subsubsection{Evaluation Protocol}
+
+All four models are compared and tuned exclusively on the development set, using Equal Error Rate (EER) as the primary metric, with precision, recall, F1-score, and ROC-AUC reported as supporting metrics. The evaluation set is held out throughout architecture and hyperparameter selection, and is evaluated only once, after every training decision has already been finalized on the development set, to avoid evaluation-set leakage into model selection.

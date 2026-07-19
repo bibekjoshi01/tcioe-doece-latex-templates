@@ -8,7 +8,7 @@ The experiments will focus on three primary aspects: robustness against RTC-indu
 
 The experimental evaluation relies on two dataset components: the ASVspoof 5 benchmark and a custom RTC-aware augmentation pipeline applied on top of it.
 
-\textbf{ASVspoof 5 (2024/2026):} Focuses on ``Generic Telephony or VoIP'' scenarios. It incorporates crowdsourced data recorded in diverse acoustic conditions and processes it with both conventional and contemporary neural codecs (e.g., EnCodec) to simulate modern VoIP quality.
+\textbf{ASVspoof 5 (2024/2026)} \cite{wang24_asvspoof}: Focuses on ``Generic Telephony or VoIP'' scenarios. It incorporates crowdsourced data recorded in diverse acoustic conditions and processes it with both conventional and contemporary neural codecs (e.g., EnCodec) to simulate modern VoIP quality. The bona fide speech is drawn from the Multilingual LibriSpeech (MLS) corpus, with all utterances distributed as 16~kHz FLAC waveforms. The official protocol splits the database into training, development, and evaluation partitions, each further divided into a Track 1 protocol for spoofing/deepfake detection, the track used in this project, and a Track 2 protocol for spoofing-robust automatic speaker verification, which is outside this project's scope. Every utterance is labeled bonafide or spoof, together with metadata such as speaker gender, attack algorithm, and, where applicable, the compression codec already applied to the recording.
 
 \textbf{RTC-Aware Augmentation Pipeline:} Applied on top of ASVspoof 5 audio, this custom pipeline introduces codec round-trip transformation, bursty packet-loss simulation, and receiver-side post-processing to expose training and evaluation data to RTC-induced transmission conditions beyond those captured in ASVspoof 5 alone.
 
@@ -57,16 +57,16 @@ By systematically varying these parameters, the study aims to determine the robu
 
 \subsubsection{Comparative Model Evaluation}
 
-The proposed study will investigate multiple deepfake detection architectures to identify the most suitable model for deployment in RTC environments.
+The proposed study investigates eight deepfake detection architectures, spanning deep learning and classical machine learning families (Section~4.5.5), to identify the most suitable model for deployment in RTC environments.
 
 Candidate models include:
 
 \begin{itemize}
-\item AASIST
-\item XGBoost-based classifiers
+\item \textbf{Deep learning:} AASIST \cite{Jung2022_aasist}, RawNet2 \cite{Tak2021_rawnet2}, NeXt-TDNN \cite{Heo2024_nexttdnn}, and Spectro-AASIST, a spectrogram-domain variant of AASIST \cite{Jung2022_aasist}.
+\item \textbf{Classical machine learning:} XGBoost \cite{Chen2016_xgboost}, Random Forest \cite{Breiman2001_rf}, Support Vector Machine \cite{Cortes1995_svm}, and histogram-based Gradient Boosting \cite{Ke2017_lightgbm}, implemented using scikit-learn \cite{Pedregosa2011_sklearn}.
 \end{itemize}
 
-In addition, different feature extraction approaches will be explored using self-supervised speech representations such as WavLM and Wav2Vec~2.0.
+In addition, different feature extraction approaches are explored for the classical classifiers using self-supervised speech representations such as WavLM \cite{Chen2022_wavlm} and Wav2Vec~2.0 \cite{Baevski2020_wav2vec2}, alongside handcrafted acoustic descriptors (Section~4.5.4).
 
 All models will be evaluated using the performance metrics defined in Section 4.7. Comparative analysis will be performed to examine differences in detection accuracy, robustness to transmission distortions, and suitability for real-time deployment.
 

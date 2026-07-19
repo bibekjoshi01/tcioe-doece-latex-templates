@@ -17,12 +17,22 @@
 \usepackage{chngcntr}
 \usepackage{pgfgantt}
 \usepackage{pgfplots}
-\usepackage{pdflscape}  
-\usepackage{placeins} 
+\usepackage{pdflscape}
+\usepackage{placeins}
 \usepackage{float}
 \usepackage{adjustbox}
 \usepackage{minted}
 \pgfplotsset{compat=1.18}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, fit}
+\tikzset{
+  archbox/.style={rectangle, rounded corners, draw=blue!60!black, fill=blue!5,
+    minimum width=7.6cm, text width=7.2cm, minimum height=0.9cm, align=center,
+    font=\small, inner sep=4pt},
+  archboxhalf/.style={rectangle, rounded corners, draw=blue!60!black, fill=blue!5,
+    minimum width=3.5cm, text width=3.3cm, minimum height=1.5cm, align=center,
+    font=\small, inner sep=4pt},
+  archarr/.style={-{Latex[length=2.2mm]}, thick, blue!60!black}
+}
 
 % Figure
 % ---------------------------------------------------------------
